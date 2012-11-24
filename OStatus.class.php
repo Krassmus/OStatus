@@ -1,11 +1,11 @@
 <?php
 
-class OStatusPlugin extends StudIPPlugin implements SystemPlugin {
+class OStatus extends StudIPPlugin implements SystemPlugin {
     
     public function __construct() {
         parent::__construct();
         
-        $nav = new AutoNavigation(_("Externe Kontakte"), PluginEngine::getURL($this, array(), "contacts/my"));
+        $nav = new AutoNavigation(_("OStatus Kontakte"), PluginEngine::getURL($this, array(), "contacts/my"));
         Navigation::addItem("/community/ostatuscontacts", $nav);
     }
     
