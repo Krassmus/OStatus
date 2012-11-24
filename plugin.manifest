@@ -1,0 +1,6 @@
+pluginclassname=OstatusPlugin
+pluginname=OstatusPlugin
+origin=data-quest
+version=0.1
+studipMinVersion=2.3.99
+studipMaxVersion=2.99
