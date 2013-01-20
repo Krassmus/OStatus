@@ -8,13 +8,17 @@
  *  the License, or (at your option) any later version.
  */
 
+require_once dirname(__file__)."/models/TinyXMLParser.php";
+
 class OStatus extends StudIPPlugin implements SystemPlugin {
     
     public function __construct() {
         parent::__construct();
         
-        $nav = new AutoNavigation(_("OStatus Kontakte"), PluginEngine::getURL($this, array(), "contacts/my"));
-        Navigation::addItem("/community/ostatuscontacts", $nav);
+        $nav = new AutoNavigation(_("Externe Kontakte"), PluginEngine::getURL($this, array(), "contacts/my"));
+        if ($GLOBALS['perm']->have_perm("autor")) {
+            Navigation::addItem("/community/ostatuscontacts", $nav);
+        }
     }
     
     /**

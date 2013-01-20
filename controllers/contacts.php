@@ -21,7 +21,22 @@ class ContactsController extends ApplicationController {
     }
     
     public function my_action() {
+        PageLayout::setTitle(_("Externe Kontakte"));
         $this->contacts = OstatusContact::findMine();
+    }
+    
+    public function add_action() {
+        if ($GLOBALS['user']->id === "nobody") {
+            return;
+        }
+        $adress = Request::get("contact_id");
+        if (strpos($adress, "@") === false) {
+            $this->render_json(array('error' => "No @ character in user-adress."));
+            return;
+        }
+        OstatusContact::makefriend($adress);
+        
+        $this->render_nothing();
     }
     
 }

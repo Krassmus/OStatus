@@ -21,7 +21,7 @@
         <? if (count($contacts)) : ?>
         <? foreach ((array) $contacts as $contact) : ?>
         <tr>
-            <td><?= htmlReady($contact['name']) ?></td>
+            <td><a href="<?= URLHelper::getLink("plugins.php/Blubber/forum/profile", array('user_id' => $contact->getId(), 'extern' => 1)) ?>"><?= htmlReady($contact['name']) ?></a></td>
             <td><?= htmlReady($contact['mail_identifier']) ?></td>
         </tr>
         <? endforeach ?>
@@ -31,4 +31,42 @@
         </tr>
         <? endif ?>
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="2">
+                <a href="" onClick="STUDIP.Ostatus.add_contact_window(); return false">
+                <?= Assets::img("icons/16/blue/plus") ?>
+                </a>
+            </td>
+        </tr>
+    </tfoot>
 </table>
+
+<div id="add_contact_window_title" style="display: none;"><?= _("Kontakt hinzufügen") ?></div>
+<div id="add_contact_window" style="display: none;">
+    <input type="text" id="contact_id">
+    <a href="" onClick="STUDIP.Ostatus.add_contact(); return false;">
+        <?= Studip\Button::create("folgen") ?>
+    </a>
+</div>
+
+<script>
+STUDIP.Ostatus = {
+    add_contact_window: function () {
+        jQuery('#add_contact_window').dialog({
+            'title': jQuery("#add_contact_window_title").text()
+        });
+    },
+    add_contact: function () {
+        jQuery.ajax({
+            'url': STUDIP.URLHelper.getURL("plugins.php/OStatus/contacts/add"),
+            'data': {
+                'contact_id': jQuery("#contact_id").val()
+            },
+            success: function (output) {
+                console.log(output);
+            }
+        });
+    }
+};
+</script>
