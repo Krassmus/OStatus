@@ -35,6 +35,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             return false;
         }
         $new_contact = new OstatusContact();
+        $new_contact['mail_identifier'] = $adress;
         $data = array();
         
         $xrd = TinyXMLParser::getArray(file_get_contents("http://".$server."/.well-known/host-meta"));
@@ -50,8 +51,19 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         }
         $new_contact['data'] = $data;
         
+        $new_contact->refresh_lrdd();
+        $new_contact->refresh_feed();
+        
+        var_dump($new_contact['data']['pubsubhubbub']);
+        
+        //now follow the user
+        
+    }
+    
+    public function refresh_lrdd() {
+        $data = $this['data'];
         $lrdd = TinyXMLParser::getArray(
-            file_get_contents(str_replace("{uri}", urlencode($adress), $new_contact['data']['lrdd_template']))
+            file_get_contents(str_replace("{uri}", urlencode($this['mail_identifier']), $data['lrdd_template']))
         );
         foreach ($lrdd as $entry1) {
             if ($entry1['name'] === "XRD") {
@@ -65,9 +77,12 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                 }
             }
         }
-        $new_contact['data'] = $data;
-        
-        $feed = TinyXMLParser::getArray(file_get_contents($new_contact['data']['feed_url']));
+        $this['data'] = $data;
+    }
+    
+    public function refresh_feed() {
+        $data = $this['data'];
+        $feed = TinyXMLParser::getArray(file_get_contents($data['feed_url']));
         foreach ($feed as $entry1) {
             if ($entry1['name'] === "FEED") {
                 foreach ($entry1['children'] as $entry2) {
@@ -78,9 +93,6 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                 }
             }
         }
-        var_dump($data['pubsubhubbub']);
-        
-        //now follow the user
-        
+        $this['data'] = $data;
     }
 }
