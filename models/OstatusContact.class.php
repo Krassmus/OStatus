@@ -24,6 +24,9 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $contact = OstatusContact::findByEmail($adress);
         if ($contact->isNew()) {
             $contact = self::import_contact($adress);
+        } else {
+            $contact->refresh_lrdd();
+            $contact->refresh_feed();
         }
         //Freundschaft eintragen und Folge-Nachricht schicken
         return $contact;
@@ -60,6 +63,10 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         
     }
     
+    public function __construct($id = null) {
+        parent::__construct($id);
+    }
+    
     public function refresh_lrdd() {
         $data = $this['data'];
         $lrdd = TinyXMLParser::getArray(
@@ -78,6 +85,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             }
         }
         $this['data'] = $data;
+        //$this->store();
     }
     
     public function refresh_feed() {
@@ -90,9 +98,24 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                     if ($entry2['name'] === "LINK" && $entry2['attrs']['REL'] === "hub") {
                         $data['pubsubhubbub'] = $entry2['attrs']['HREF'];
                     }
+                    if ($entry2['name'] === "AUTHOR") {
+                        $name = "";
+                        foreach ($entry2['children'] as $entry3) {
+                            if ($entry3['name'] === "NAME" && !$name) {
+                                $name = $entry3['tagData'];
+                            }
+                            if ($entry3['name'] === "POCO:DISPLAYNAME") {
+                                $name = $entry3['tagData'];
+                            }
+                        }
+                        if ($name or !$this['name']) {
+                            $this['name'] = $name;
+                        }
+                    }
                 }
             }
         }
         $this['data'] = $data;
+        $this->store();
     }
 }
