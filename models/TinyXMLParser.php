@@ -7,7 +7,7 @@ class TinyXMLParser {
     protected $strXmlData;
     
     static public function getArray($string) {
-        return self::get()->parse($string);
+        return studip_utf8decode(self::get()->parse($string));
     }
     
     static public function get() {

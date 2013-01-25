@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__file__)."/../../../core/Blubber/models/BlubberUser.class.php";
+require_once dirname(__file__)."/../../../core/Blubber/models/BlubberExternalContact.class.php";
 
 class OstatusContact extends BlubberExternalContact implements BlubberContact {
     
@@ -79,7 +80,11 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
     public function __construct($id = null) {
         parent::__construct($id);
     }
-    
+
+    public function getURL() {
+        return URLHelper::getURL("plugins.php/Blubber/streams/profile", array('user_id' => $this->getId(), 'extern' => 1));
+    }
+
     public function refresh_lrdd() {
         $data = $this['data'];
         $lrdd = TinyXMLParser::getArray(
@@ -126,8 +131,8 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                         }
                     }
                     if ($entry2['name'] === "ENTRY") {
-                        var_dump($entry2);
-                        $id = $verb = $content = $object_type = $mkdate = "";
+                        //var_dump($entry2);
+                        $id = $verb = $content = $object_type = $mkdate = $reply_to = "";
                         foreach ($entry2['children'] as $entry_attributes) {
                             if ($entry_attributes['name'] === "ID") {
                                 $id = $entry_attributes['tagData'];
@@ -144,23 +149,48 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                             if ($entry_attributes['name'] === "PUBLISHED") {
                                 $mkdate = strtotime($entry_attributes['tagData']);
                             }
+                            if ($entry_attributes['name'] === "THR:IN-REPLY-TO") {
+                                $reply_to = $entry_attributes['attrs']['HREF'];
+                            }
                         }
                         if ($id && $verb && $content && $object_type) {
-                            switch ($verb) {
-                                case "http://activitystrea.ms/schema/1.0/post":
-                                    $posting = OstatusPosting::getByForeignId($id);
-                                    $posting['mkdate'] = $mkdate;
-                                    $posting['description'] = $content;
-                                    $posting['user_id'] = $posting['Seminar_id'] = $this['external_contact_id'];
-                                    $posting['external_contact'] = 1;
-                                    $posting['context_type'] = "public";
-                                    $posting['parent_id'] = 0;
-                                    $posting->store();
-                                    $posting['root_id'] = $posting->getId();
-                                    break;
-                                case "http://activitystrea.ms/schema/1.0/comment":
-                                    $parent_id;
-                                    break;
+                            if ($verb === "http://activitystrea.ms/schema/1.0/post") {
+                                switch ($object_type) {
+                                    case "http://activitystrea.ms/schema/1.0/note":
+                                        $posting = OstatusPosting::getByForeignId($id);
+                                        $posting['mkdate'] = $mkdate;
+                                        $posting['description'] = $content;
+                                        $posting['user_id'] = $posting['Seminar_id'] = $this['external_contact_id'];
+                                        $posting['external_contact'] = 1;
+                                        $posting['context_type'] = "public";
+                                        $posting['parent_id'] = 0;
+                                        if ($posting->isNew() && !$posting->getId()) {
+                                            $posting->store();
+                                            $posting['root_id'] = $posting->getId();
+                                        }
+                                        $posting->store();
+                                        break;
+                                    case "http://activitystrea.ms/schema/1.0/comment":
+                                        //only insert if we already know the thread
+                                        if ($reply_to) {
+                                            $replied_posting = OstatusPosting::getByForeignId($reply_to);
+                                            if (!$replied_posting->isNew()) {
+                                                $posting = OstatusPosting::getByForeignId($id);
+                                                $posting['mkdate'] = $mkdate;
+                                                $posting['description'] = $content;
+                                                $posting['user_id'] = $posting['Seminar_id'] = $this['external_contact_id'];
+                                                $posting['external_contact'] = 1;
+                                                $posting['context_type'] = "public";
+                                                $posting['parent_id'] = $replied_posting->getId();
+                                                if ($posting->isNew() && !$posting->getId()) {
+                                                    $posting->store();
+                                                    $posting['root_id'] = $replied_posting['root_id'];
+                                                }
+                                                $posting->store();
+                                            }
+                                        }
+                                        break;
+                                }
                             }
                         }
                     }
