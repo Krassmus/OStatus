@@ -21,6 +21,13 @@ class OStatus extends StudIPPlugin implements SystemPlugin {
         if ($GLOBALS['perm']->have_perm("autor")) {
             Navigation::addItem("/community/ostatuscontacts", $nav);
         }
+        if (strpos($_SERVER['REQUEST_URI'], "plugins.php/Blubber/streams/profile") !== false && Request::get('user_id') && Request::get("extern")) {
+            $contact = BlubberExternalContact::find(Request::get('user_id'));
+            if (is_a($contact, "BlubberContact")) {
+                $contact->restore();
+                $contact->refresh_feed();
+            }
+        }
     }
     
     /**

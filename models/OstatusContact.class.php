@@ -112,12 +112,14 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         foreach ($feed as $entry1) {
             if ($entry1['name'] === "FEED") {
                 foreach ($entry1['children'] as $entry2) {
-                    //get hub
                     if ($entry2['name'] === "LINK" && $entry2['attrs']['REL'] === "hub") {
+                        //get hub
                         $data['pubsubhubbub'] = $entry2['attrs']['HREF'];
                     }
                     if ($entry2['name'] === "AUTHOR") {
+                        //informationen about the user
                         $name = "";
+                        $avatars = array();
                         foreach ($entry2['children'] as $entry3) {
                             if ($entry3['name'] === "NAME" && !$name) {
                                 $name = $entry3['tagData'];
@@ -125,74 +127,27 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                             if ($entry3['name'] === "POCO:DISPLAYNAME") {
                                 $name = $entry3['tagData'];
                             }
+                            if ($entry3['name'] === "LINK" && $entry3['attrs']['REL'] === "avatar") {
+                                $avatars[$entry3['attrs']['HREF']] = $entry3['attrs']['MEDIA:WIDTH'];
+                            }
                         }
-                        if ($name or !$this['name']) {
+                        if ($name) {
                             $this['name'] = $name;
+                        }
+                        if (count($avatars)) {
+                            $href = array_shift(array_keys($avatars, max($avatars)));
+                            $file_content = file_get_contents($href);
+                            if ($file_content) {
+                                $tmp_file = $GLOBALS['TMP_PATH']."/".md5(uniqid());
+                                file_put_contents($tmp_file, $file_content);
+                                BlubberContactAvatar::getAvatar($this->getId())->createFrom($tmp_file);
+                                @unlink($tmp_file);
+                            }
                         }
                     }
                     if ($entry2['name'] === "ENTRY") {
-                        //var_dump($entry2);
-                        $id = $verb = $content = $object_type = $mkdate = $reply_to = "";
-                        foreach ($entry2['children'] as $entry_attributes) {
-                            if ($entry_attributes['name'] === "ID") {
-                                $id = $entry_attributes['tagData'];
-                            }
-                            if ($entry_attributes['name'] === "ACTIVITY:VERB") {
-                                $verb = $entry_attributes['tagData'];
-                            }
-                            if ($entry_attributes['name'] === "ACTIVITY:OBJECT-TYPE") {
-                                $object_type = $entry_attributes['tagData'];
-                            }
-                            if ($entry_attributes['name'] === "CONTENT") {
-                                $content = $entry_attributes['tagData'];
-                            }
-                            if ($entry_attributes['name'] === "PUBLISHED") {
-                                $mkdate = strtotime($entry_attributes['tagData']);
-                            }
-                            if ($entry_attributes['name'] === "THR:IN-REPLY-TO") {
-                                $reply_to = $entry_attributes['attrs']['HREF'];
-                            }
-                        }
-                        if ($id && $verb && $content && $object_type) {
-                            if ($verb === "http://activitystrea.ms/schema/1.0/post") {
-                                switch ($object_type) {
-                                    case "http://activitystrea.ms/schema/1.0/note":
-                                        $posting = OstatusPosting::getByForeignId($id);
-                                        $posting['mkdate'] = $mkdate;
-                                        $posting['description'] = $content;
-                                        $posting['user_id'] = $posting['Seminar_id'] = $this['external_contact_id'];
-                                        $posting['external_contact'] = 1;
-                                        $posting['context_type'] = "public";
-                                        $posting['parent_id'] = 0;
-                                        if ($posting->isNew() && !$posting->getId()) {
-                                            $posting->store();
-                                            $posting['root_id'] = $posting->getId();
-                                        }
-                                        $posting->store();
-                                        break;
-                                    case "http://activitystrea.ms/schema/1.0/comment":
-                                        //only insert if we already know the thread
-                                        if ($reply_to) {
-                                            $replied_posting = OstatusPosting::getByForeignId($reply_to);
-                                            if (!$replied_posting->isNew()) {
-                                                $posting = OstatusPosting::getByForeignId($id);
-                                                $posting['mkdate'] = $mkdate;
-                                                $posting['description'] = $content;
-                                                $posting['user_id'] = $posting['Seminar_id'] = $this['external_contact_id'];
-                                                $posting['external_contact'] = 1;
-                                                $posting['context_type'] = "public";
-                                                $posting['parent_id'] = $replied_posting->getId();
-                                                if ($posting->isNew() && !$posting->getId()) {
-                                                    $posting->store();
-                                                    $posting['root_id'] = $replied_posting['root_id'];
-                                                }
-                                                $posting->store();
-                                            }
-                                        }
-                                        break;
-                                }
-                            }
-                        }
+                        //create the postings in our database
+                        OstatusPosting::createFromArray($entry2, $this['external_contact_id']);
                     }
                 }
             }
