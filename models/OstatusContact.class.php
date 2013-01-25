@@ -29,7 +29,18 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             $contact->refresh_feed();
         }
         //Freundschaft eintragen und Folge-Nachricht schicken
-        return $contact;
+        if ($contact->getId()) {
+            $statement = DBManager::get()->prepare(
+                "INSERT IGNORE INTO blubber_follower " .
+                "SET studip_user_id = :me, " .
+                    "external_contact_id = :contact_id, " .
+                    "left_follows_right = '1' " .
+            "");
+            $statement->execute(array('me' => $GLOBALS['user']->id, 'contact_id' => $contact->getId()));
+            return $contact;
+        } else {
+            return false;
+        }
     }
     
     static public function import_contact($adress) {
@@ -39,6 +50,8 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         }
         $new_contact = new OstatusContact();
         $new_contact['mail_identifier'] = $adress;
+        $new_contact['name'] = $adress;
+        $new_contact['contact_type'] = __class__;
         $data = array();
         
         $xrd = TinyXMLParser::getArray(file_get_contents("http://".$server."/.well-known/host-meta"));
@@ -85,7 +98,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             }
         }
         $this['data'] = $data;
-        //$this->store();
+        $this->store();
     }
     
     public function refresh_feed() {
@@ -110,6 +123,45 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                         }
                         if ($name or !$this['name']) {
                             $this['name'] = $name;
+                        }
+                    }
+                    if ($entry2['name'] === "ENTRY") {
+                        var_dump($entry2);
+                        $id = $verb = $content = $object_type = $mkdate = "";
+                        foreach ($entry2['children'] as $entry_attributes) {
+                            if ($entry_attributes['name'] === "ID") {
+                                $id = $entry_attributes['tagData'];
+                            }
+                            if ($entry_attributes['name'] === "ACTIVITY:VERB") {
+                                $verb = $entry_attributes['tagData'];
+                            }
+                            if ($entry_attributes['name'] === "ACTIVITY:OBJECT-TYPE") {
+                                $object_type = $entry_attributes['tagData'];
+                            }
+                            if ($entry_attributes['name'] === "CONTENT") {
+                                $content = $entry_attributes['tagData'];
+                            }
+                            if ($entry_attributes['name'] === "PUBLISHED") {
+                                $mkdate = strtotime($entry_attributes['tagData']);
+                            }
+                        }
+                        if ($id && $verb && $content && $object_type) {
+                            switch ($verb) {
+                                case "http://activitystrea.ms/schema/1.0/post":
+                                    $posting = OstatusPosting::getByForeignId($id);
+                                    $posting['mkdate'] = $mkdate;
+                                    $posting['description'] = $content;
+                                    $posting['user_id'] = $posting['Seminar_id'] = $this['external_contact_id'];
+                                    $posting['external_contact'] = 1;
+                                    $posting['context_type'] = "public";
+                                    $posting['parent_id'] = 0;
+                                    $posting->store();
+                                    $posting['root_id'] = $posting->getId();
+                                    break;
+                                case "http://activitystrea.ms/schema/1.0/comment":
+                                    $parent_id;
+                                    break;
+                            }
                         }
                     }
                 }

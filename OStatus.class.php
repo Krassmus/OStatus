@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__file__)."/models/TinyXMLParser.php";
+require_once dirname(__file__)."/models/OstatusPosting.class.php";
 
 class OStatus extends StudIPPlugin implements SystemPlugin {
     

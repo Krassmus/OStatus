@@ -10,7 +10,7 @@
 
 ?>
 
-<table>
+<table class="default hover">
     <thead>
         <tr>
             <th><?= _("Name") ?></th>
@@ -21,7 +21,7 @@
         <? if (count($contacts)) : ?>
         <? foreach ((array) $contacts as $contact) : ?>
         <tr>
-            <td><a href="<?= URLHelper::getLink("plugins.php/Blubber/forum/profile", array('user_id' => $contact->getId(), 'extern' => 1)) ?>"><?= htmlReady($contact['name']) ?></a></td>
+            <td><a href="<?= URLHelper::getLink("plugins.php/Blubber/streams/profile", array('user_id' => $contact->getId(), 'extern' => 1)) ?>"><?= htmlReady($contact['name']) ?></a></td>
             <td><?= htmlReady($contact['mail_identifier']) ?></td>
         </tr>
         <? endforeach ?>
@@ -70,3 +70,25 @@ STUDIP.Ostatus = {
     }
 };
 </script>
+
+<?
+
+$infobox = array(
+    array("kategorie" => _("Informationen"),
+          "eintrag"   =>
+        array(
+            array(
+                "icon" => "icons/16/black/info",
+                "text" => _("Trage Freunde aus anderen Stud.IPs oder OStatus-Netzwerken wie Identi.ca, friendica oder status.net ein.")
+            ),
+            array(
+                "icon" => "icons/16/black/rss",
+                "text" => _("OStatus ist ein offenes Protokoll mit dem sich verschiedene soziale Netzwerke miteinander verknüpfen können. So kannst Du mit Leuten blubbern, die in einem fremden Netzwerk sind, es fühlt sich aber an, als wären sie ganz nah.")
+            )
+        )
+    )
+);
+$infobox = array(
+    'picture' => $assets_url . "/social_networks_luc_legay_cc_by_sa.jpg",
+    'content' => $infobox
+);
