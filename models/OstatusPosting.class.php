@@ -93,15 +93,25 @@ class OstatusPosting extends BlubberPosting {
     }
 
     public function store() {
+        $mkdate = $this['mkdate'];
+        $new = $this->isNew();
         $success = parent::store();
         if ($success && $this->getId() && $this->foreign_id) {
             $statement = DBManager::get()->prepare(
-                "INSERT INTO ostatus_mapping " .
+                "INSERT IGNORE INTO ostatus_mapping " .
                 "SET item_id = :blubber_id, " .
                     "foreign_id = :foreign_id, " .
                     "type = 'posting' " .
             "");
             $statement->execute(array('blubber_id' => $this->getId(), 'foreign_id' => $this->foreign_id));
+            if ($new && $mkdate != $this['mkdate']) {
+                $statement = DBManager::get()->prepare(
+                    "UPDATE blubber " .
+                    "SET mkdate = :mkdate " .
+                    "WHERE topic_id = :topic_id " .
+                "");
+                $statement->execute(array('topic_id' => $this->getId(), 'mkdate' => $mkdate));
+            }
         }
         return $success;
     }

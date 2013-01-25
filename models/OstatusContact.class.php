@@ -111,7 +111,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $feed = TinyXMLParser::getArray(file_get_contents($data['feed_url']));
         foreach ($feed as $entry1) {
             if ($entry1['name'] === "FEED") {
-                foreach ($entry1['children'] as $entry2) {
+                foreach (array_reverse($entry1['children']) as $entry2) {
                     if ($entry2['name'] === "LINK" && $entry2['attrs']['REL'] === "hub") {
                         //get hub
                         $data['pubsubhubbub'] = $entry2['attrs']['HREF'];
@@ -140,6 +140,10 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                             if ($file_content) {
                                 $tmp_file = $GLOBALS['TMP_PATH']."/".md5(uniqid());
                                 file_put_contents($tmp_file, $file_content);
+                                $folder = $GLOBALS['ABSOLUTE_PATH_STUDIP']."/pictures/blubbercontact";
+                                if (!file_exists($folder)) {
+                                    mkdir($folder, 0777);
+                                }
                                 BlubberContactAvatar::getAvatar($this->getId())->createFrom($tmp_file);
                                 @unlink($tmp_file);
                             }
