@@ -31,13 +31,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         }
         //Freundschaft eintragen und Folge-Nachricht schicken
         if ($contact->getId()) {
-            $statement = DBManager::get()->prepare(
-                "INSERT IGNORE INTO blubber_follower " .
-                "SET studip_user_id = :me, " .
-                    "external_contact_id = :contact_id, " .
-                    "left_follows_right = '1' " .
-            "");
-            $statement->execute(array('me' => $GLOBALS['user']->id, 'contact_id' => $contact->getId()));
+            $contact->follow_user();
             return $contact;
         } else {
             return false;
@@ -70,11 +64,6 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         
         $new_contact->refresh_lrdd();
         $new_contact->refresh_feed();
-        
-        var_dump($new_contact['data']['pubsubhubbub']);
-        
-        //now follow the user
-        
     }
     
     public function __construct($id = null) {
@@ -83,6 +72,10 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
 
     public function getURL() {
         return URLHelper::getURL("plugins.php/Blubber/streams/profile", array('user_id' => $this->getId(), 'extern' => 1));
+    }
+    
+    public function mention($posting) {
+        
     }
 
     public function refresh_lrdd() {
@@ -158,5 +151,33 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         }
         $this['data'] = $data;
         $this->store();
+    }
+    
+    public function follow_user($follower_user_id = null) {
+        if (!$follower_user_id) {
+            $follower_user_id = $GLOBALS['user']->id;
+        }
+        $statement = DBManager::get()->prepare(
+            "INSERT IGNORE INTO blubber_follower " .
+            "SET studip_user_id = :me, " .
+                "external_contact_id = :contact_id, " .
+                "left_follows_right = '1' " .
+        "");
+        $statement->execute(array('me' => $follower_user_id, 'contact_id' => $this->getId()));
+        
+        $id_arr = array(
+            'name' => "id",
+            'tagData' => "mimime:1282485236"
+        );
+        $title_arr = array(
+            'name' => "title",
+            'tagData' => get_fullname($follower_user_id)." is now following ".$this->getName()
+        );
+        $xml_arr = array(
+            'name' => "entry",
+            'attrs' => array('xmlns' => "http://www.w3.org/2005/Atom", 'xmlns:activity' => "http://activitystrea.ms/spec/1.0/"),
+            'children' => array()
+        );
+        $new_contact['data']['pubsubhubbub'];
     }
 }

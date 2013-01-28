@@ -10,8 +10,37 @@ class TinyXMLParser {
         return studip_utf8decode(self::get()->parse($string));
     }
     
+    static public function getXML($arr) {
+        return self::get()->arr2xml(studip_utf8encode($arr));
+    }
+    
     static public function get() {
         return new TinyXMLParser();
+    }
+    
+    public function arr2xml($arr) {
+        $output = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $output .= $this->getXmlNode($arr);
+        return $output;
+    }
+    
+    protected function getXmlNode($arr) {
+        $output = '<'.htmlReady($arr['name']);
+        foreach ((array) $arr['attrs'] as $attribute_name => $attribute) {
+            $output .= ' '.htmlReady($attribute_name).'="'.htmlReady($attribute).'"';
+        }
+        $output .= '>';
+        if (count((array) $arr['children'])) {
+            $output .= "\n";
+            foreach ($arr['children'] as $childnode) {
+                $output .= $this->getXmlNode($childnode);
+            }
+            $output .= "\n";
+        } else {
+            $output .= htmlReady($arr['tagData']);
+        }
+        $output .= '</'.htmlReady($arr['name']).'>';
+        return $output;
     }
    
     public function parse($strInputXML) {
