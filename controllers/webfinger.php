@@ -17,7 +17,7 @@ class WebfingerController extends ApplicationController {
         $username = substr($resource, 0, stripos($resource, "@"));
         
         $this->set_layout(null);
-        $this->user = new User(get_userid($username));
+        $this->user = new BlubberUser(get_userid($username));
     }
     
 }

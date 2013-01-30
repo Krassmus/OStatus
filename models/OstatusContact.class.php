@@ -86,6 +86,12 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         foreach ($lrdd as $entry1) {
             if ($entry1['name'] === "XRD") {
                 foreach ($entry1['children'] as $entry2) {
+                    if ($entry2['name'] === "ALIAS") {
+                        $data['alias'] = $entry2['tagData'];
+                    }
+                    if ($entry2['name'] === "SUBJECT") {
+                        $data['subject'] = $entry2['tagData'];
+                    }
                     if ($entry2['name'] === "LINK" && $entry2['attrs']['REL'] === "http://schemas.google.com/g/2010#updates-from") {
                         $data['feed_url'] = $entry2['attrs']['HREF'];
                     }
@@ -108,6 +114,10 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                     if ($entry2['name'] === "LINK" && $entry2['attrs']['REL'] === "hub") {
                         //get hub
                         $data['pubsubhubbub'] = $entry2['attrs']['HREF'];
+                    }
+                    if ($entry2['name'] === "LINK" && $entry2['attrs']['REL'] === "alternate") {
+                        //get hub
+                        $data['alternate'] = $entry2['tagData'];
                     }
                     if ($entry2['name'] === "AUTHOR") {
                         //informationen about the user
@@ -157,6 +167,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         if (!$follower_user_id) {
             $follower_user_id = $GLOBALS['user']->id;
         }
+        $user = new BlubberUser($follower_user_id);
         $statement = DBManager::get()->prepare(
             "INSERT IGNORE INTO blubber_follower " .
             "SET studip_user_id = :me, " .
@@ -165,19 +176,13 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         "");
         $statement->execute(array('me' => $follower_user_id, 'contact_id' => $this->getId()));
         
-        $id_arr = array(
-            'name' => "id",
-            'tagData' => "mimime:1282485236"
-        );
-        $title_arr = array(
-            'name' => "title",
-            'tagData' => get_fullname($follower_user_id)." is now following ".$this->getName()
-        );
-        $xml_arr = array(
-            'name' => "entry",
-            'attrs' => array('xmlns' => "http://www.w3.org/2005/Atom", 'xmlns:activity' => "http://activitystrea.ms/spec/1.0/"),
-            'children' => array()
-        );
+        $template_factory = new Flexi_TemplateFactory(dirname(__file__)."/../views");
+        $follow_template = $template_factory->open("feed/follow.php");
+        $follow_template->set_attribute('user', $user);
+        $follow_template->set_attribute('whiterabbit', $this);
+        $xml = $follow_template->render();
+        $base64 = base64_encode($xml);
+        
         $new_contact['data']['pubsubhubbub'];
     }
 }

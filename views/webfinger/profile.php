@@ -8,9 +8,9 @@
     <Link rel="http://apinamespace.org/atom" type="application/atomsvc+xml" href="http://identi.ca/api/statusnet/app/service/krassmus.xml"><Property type="http://apinamespace.org/atom/username"><?= htmlReady($user['username']) ?></Property></Link>
     <Link rel="http://schemas.google.com/g/2010#updates-from" href="http://identi.ca/api/statuses/user_timeline/1046034.atom" type="application/atom+xml"></Link>
     <Link rel="salmon" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP'] ?>/plugins.php/ostatus/salmon/user/<?= $user->getId() ?>"></Link>
-    <Link rel="http://salmon-protocol.org/ns/salmon-replies" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP'] ?>/plugins.php/ostatus/salmon/replies/<?= $user->getId() ?>"></Link>
-    <Link rel="http://salmon-protocol.org/ns/salmon-mention" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP'] ?>/plugins.php/ostatus/salmon/mention/<?= $user->getId() ?>"></Link>
+    <Link rel="http://salmon-protocol.org/ns/salmon-replies" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP'] ?>plugins.php/ostatus/salmon/replies/<?= $user->getId() ?>"></Link>
+    <Link rel="http://salmon-protocol.org/ns/salmon-mention" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP'] ?>plugins.php/ostatus/salmon/mention/<?= $user->getId() ?>"></Link>
     <Link rel="magic-public-key" href="data:application/magic-public-key,RSA.8zK369nRrd2grj5BO3izZt9AsHZvOu4oouLPed-jgjC1LfTMg210jK3vf7t3ZjdAhRmF7sgnhvas-4SNSta-8S84w4xDuHpqutNEBNhirFFEBbGD-y0l1eyvPaFwG9-7H5nVT9FeV9dcaBUo6v4bV7kkj_3x5J85yZROjYVKdas=.AQAB"></Link>
     <Link rel="http://ostatus.org/schema/1.0/subscribe" template="http://identi.ca/main/ostatussub?profile={uri}"></Link>
-    <Link rel="http://specs.openid.net/auth/2.0/provider" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP'].URLHelper::getLink("about.php", array('username' => $user['username'])) ?>"></Link>
+    <Link rel="http://specs.openid.net/auth/2.0/provider" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP'].'dispatch.php/profile?username='.$user['username'] ?>"></Link>
 </XRD>
