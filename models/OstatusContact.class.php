@@ -98,6 +98,9 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                     if ($entry2['name'] === "LINK" && $entry2['attrs']['REL'] === "salmon") {
                         $data['salmon_url'] = $entry2['attrs']['HREF'];
                     }
+                    if ($entry2['name'] === "LINK" && $entry2['attrs']['REL'] === "magic-public-key") {
+                        $data['magic-public-key'] = $entry2['attrs']['HREF'];
+                    }
                 }
             }
         }
@@ -181,8 +184,13 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $follow_template->set_attribute('user', $user);
         $follow_template->set_attribute('whiterabbit', $this);
         $xml = $follow_template->render();
-        $base64 = base64_encode($xml);
+        $envelope_xml = $this->createEnvelope($xml);
         
         $new_contact['data']['pubsubhubbub'];
+    }
+    
+    public function createEnvelope($xml) {
+        $base64 = base64_encode($xml);
+        
     }
 }
