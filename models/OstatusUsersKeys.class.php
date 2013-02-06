@@ -1,6 +1,6 @@
 <?php
 
-class UsersOstatusKeys extends SimpleORMap {
+class OstatusUsersKeys extends SimpleORMap {
     
     public function __construct($id = null) {
         $this->db_table = "ostatus_users_keys";
