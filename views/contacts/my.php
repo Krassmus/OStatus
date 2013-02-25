@@ -82,7 +82,7 @@ $infobox = array(
                 "text" => _("Trage Freunde aus anderen Stud.IPs oder OStatus-Netzwerken wie Identi.ca, friendica oder status.net ein.")
             ),
             array(
-                "icon" => "icons/16/black/rss",
+                "icon" => $assets_url."/ostatus_16_black.png",
                 "text" => _("OStatus ist ein offenes Protokoll mit dem sich verschiedene soziale Netzwerke miteinander verknüpfen können. So kannst Du mit Leuten blubbern, die in einem fremden Netzwerk sind, es fühlt sich aber an, als wären sie ganz nah.")
             )
         )
