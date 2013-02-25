@@ -190,17 +190,8 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
     }
     
     public function createEnvelope($xml) {
-        $base64 = base64_encode($xml);
-        $key = $this['data']['magic-public-key'];
         
-        $key = str_replace("data:application/magic-public-key,", "", $key);
-        $key = str_replace("RSA.", "", $key);
-        $key = str_replace(".AQAB", "", $key);
-        $key = "-----BEGIN PUBLIC KEY----- \n".$key."\n-----END PUBLIC KEY----- ";
-        $public_key = openssl_pkey_get_public($key);
-        var_dump($public_key);
-        //openssl_public_encrypt($base64, $output, $key);
-        //echo "encrypted:\n";
-        //var_dump($output);
+        $keys = OstatusUsersKeys::get($GLOBALS['user']->id);
+        
     }
 }
