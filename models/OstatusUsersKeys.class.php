@@ -1,5 +1,10 @@
 <?php
 
+require_once dirname(__file__).'/../vendor/Math/BigInteger.php';
+require_once dirname(__file__).'/../vendor/Crypt/Random.php';
+require_once dirname(__file__).'/../vendor/Crypt/Hash.php';
+require_once dirname(__file__).'/../vendor/Crypt/RSA.php';
+
 class OstatusUsersKeys extends SimpleORMap {
     
     static public function get($user_id) {
@@ -18,24 +23,22 @@ class OstatusUsersKeys extends SimpleORMap {
     }
     
     public function createKeys() {
-        $res = openssl_pkey_new(array('private_key_bits' => 1024));
-        if ($res === false) {
-            var_dump(openssl_error_string());
-        }
-        echo "private:";
-        var_dump($res);
-        
+        $rsa = new Crypt_RSA();
 
-        openssl_pkey_export($res, $privkey);
-        
-        var_dump($privkey);
+        $keypair = $rsa->createKey();
 
-        $pubkey=openssl_pkey_get_details($res);
-        $pubkey=$pubkey["key"];
-        $this['public_key'] = $pubkey;
-        $this['private_key'] = $privkey;
+        $rsa->loadKey($keypair['privatekey']);
 
-        var_dump($pubkey);
+        $privateKey = new Crypt_RSA();
+
+        $privateKey->loadKey($keypair['privatekey']);
+
+        $publicKey = new Crypt_RSA();
+
+        $publicKey->loadKey($keypair['publickey']);
+
+        var_dump($publicKey);
         die();
+        
     }
 }
