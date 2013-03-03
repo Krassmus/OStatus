@@ -27,6 +27,8 @@ class OstatusUsersKeys extends SimpleORMap {
 
         $keypair = $rsa->createKey();
 
+        var_dump($keypair);
+        
         $rsa->loadKey($keypair['privatekey']);
 
         $privateKey = new Crypt_RSA();
