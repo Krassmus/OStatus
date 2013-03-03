@@ -19,10 +19,14 @@ class MagicSignature {
     
     static public function sign($message, $private_key) {
         //RSASSA-PKCS1-V1_5-SIGN using sha256
-        $message64 = self::base64_url_encode($message);
-        $sha256_hash = sha256($message64);
-        openssl_sign($sha256_hash, $signature, $private_key);
-        return $signature;
+        $rsa = new Crypt_RSA();
+        $rsa->loadKey($private_key);
+        $rsa->signatureMode = CRYPT_RSA_SIGNATURE_PKCS1;
+        $rsa->setHash("sha256");
+        $signature = $rsa->sign($message);
+        $signature64 = self::base64_url_encode($signature);
+        
+        return $signature64;
     }
     
     static public function verify($message, $signature, $public_key) {
