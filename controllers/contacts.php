@@ -23,8 +23,6 @@ class ContactsController extends ApplicationController {
     public function my_action() {
         PageLayout::setTitle(_("Externe Kontakte"));
         $key = OstatusUsersKeys::get($GLOBALS['user']->id);
-        $signature = MagicSignature::sign("huhu", $key['private_key']);
-        var_dump($signature);
         
         $this->contacts = OstatusContact::findMine();
     }

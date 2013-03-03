@@ -29,8 +29,14 @@ class MagicSignature {
         return $signature64;
     }
     
-    static public function verify($message, $signature, $public_key) {
-        return true;
+    static public function verify($message, $signature64, $public_key) {
+        $rsa = new Crypt_RSA();
+        $rsa->loadKey($public_key);
+        $rsa->signatureMode = CRYPT_RSA_SIGNATURE_PKCS1;
+        $rsa->setHash("sha256");
+        
+        $signature = self::base64_url_decode($signature64);
+        return $rsa->verify($message, $signature);
     }
 }
 
