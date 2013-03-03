@@ -24,9 +24,9 @@ class ContactsController extends ApplicationController {
         PageLayout::setTitle(_("Externe Kontakte"));
         if (!function_exists("openssl_public_encrypt")) {
             PageLayout::postMessage(MessageBox::info(_("OpenSSL ist in PHP nicht installiert. OStatus wird damit nicht korrekt funktionieren.")));
+        } else {
+            $key = OstatusUsersKeys::get($GLOBALS['user']->id);
         }
-        $key = OstatusUsersKeys::get($GLOBALS['user']->id);
-        var_dump($key);
         $this->contacts = OstatusContact::findMine();
     }
     
