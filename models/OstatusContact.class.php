@@ -31,7 +31,10 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         }
         //Freundschaft eintragen und Folge-Nachricht schicken
         if ($contact->getId()) {
-            $contact->follow_user();
+            $success = $contact->follow_user();
+            if ($success !== true) {
+                var_dump($success);
+            }
             return $contact;
         } else {
             return false;
@@ -186,12 +189,27 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $xml = $follow_template->render();
         $envelope_xml = $this->createEnvelope($xml);
         
-        $new_contact['data']['pubsubhubbub'];
+        //POST-Request
+        $request = curl_init($new_contact['data']['pubsubhubbub']);
+        curl_setopt($request, CURLOPT_POST, 1);
+        curl_setopt($request, CURLOPT_POSTFIELDS, $envelope_xml);
+        curl_exec($request);
+        $error = curl_error($request);
+        curl_close($request);
+        
+        //and the other server does the rest.
+        return $error ? $error : true;
     }
     
     public function createEnvelope($xml) {
-        
         $keys = OstatusUsersKeys::get($GLOBALS['user']->id);
+        $data = MagicSignature::base64_url_encode($xml);
+        $sig = MagicSignature::sign($xml, $keys['private_key']);
         
+        $template_factory = new Flexi_TemplateFactory(dirname(__file__)."/../views");
+        $follow_template = $template_factory->open("salmon/envelope.php");
+        $follow_template->set_attribute('base64data', $data);
+        $follow_template->set_attribute('sig', $sig);
+        return $follow_template->render();
     }
 }

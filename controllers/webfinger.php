@@ -18,6 +18,9 @@ class WebfingerController extends ApplicationController {
         
         $this->set_layout(null);
         $this->user = new BlubberUser(get_userid($username));
+        if (!$this->user->isNew()) {
+            $this->keys = OstatusUsersKeys::get($this->user->getId());
+        }
     }
     
 }
