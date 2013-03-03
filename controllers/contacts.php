@@ -25,6 +25,8 @@ class ContactsController extends ApplicationController {
         if (!function_exists("openssl_public_encrypt")) {
             PageLayout::postMessage(MessageBox::info(_("OpenSSL ist in PHP nicht installiert. OStatus wird damit nicht korrekt funktionieren.")));
         }
+        $key = OstatusUsersKeys::get($GLOBALS['user']->id);
+        var_dump($key);
         $this->contacts = OstatusContact::findMine();
     }
     
