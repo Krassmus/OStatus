@@ -38,6 +38,7 @@ class MagicSignature {
         $signature = self::base64_url_decode($signature64);
         return $rsa->verify($message, $signature);
     }
+    
 }
 
 class OstatusMagicSignature extends MagicSignature {

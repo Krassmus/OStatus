@@ -28,4 +28,10 @@ class OstatusUsersKeys extends SimpleORMap {
         $this['private_key'] = $keypair['privatekey'];
         $this['public_key'] = $keypair['publickey'];
     }
+    
+    public function getPublicRSA() {
+        $rsa = new Crypt_RSA();
+        $rsa->loadKey($this['public_key']);
+        return $rsa;
+    }
 }

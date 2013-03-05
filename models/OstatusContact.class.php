@@ -67,6 +67,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         
         $new_contact->refresh_lrdd();
         $new_contact->refresh_feed();
+        return $new_contact;
     }
     
     public function __construct($id = null) {
@@ -192,6 +193,10 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         //POST-Request
         $request = curl_init($new_contact['data']['pubsubhubbub']);
         curl_setopt($request, CURLOPT_POST, 1);
+        curl_setopt($request, CURLOPT_HTTPHEADER, array(
+            'Content-type: application/magic-envelope+xml',
+            'Content-Length: ' . strlen($envelope_xml)
+        ));
         curl_setopt($request, CURLOPT_POSTFIELDS, $envelope_xml);
         curl_exec($request);
         $error = curl_error($request);
