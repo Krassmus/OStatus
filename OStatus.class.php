@@ -14,6 +14,7 @@ require_once dirname(__file__)."/models/OstatusContact.class.php";
 require_once dirname(__file__)."/models/OstatusUsersKeys.class.php";
 require_once dirname(__file__)."/models/MagicSignature.class.php";
 require_once dirname(__file__)."/models/StreamActivity.class.php";
+require_once dirname(__file__)."/models/SalmonDriver.class.php";
 
 if (!function_exists("l")) {
     function l($text) {
@@ -40,6 +41,9 @@ class OStatus extends StudIPPlugin implements SystemPlugin {
                 $contact->refresh_feed();
             }
         }
+        
+        //Salmon:
+        NotificationCenter::addObserver(SalmonDriver::create(), "processBlubber", "ActivityStreamProcesses", $this);
     }
     
     /**

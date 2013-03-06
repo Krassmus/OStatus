@@ -30,8 +30,12 @@ class MagicSignature {
     }
     
     static public function verify($message, $signature64, $public_key) {
-        $rsa = new Crypt_RSA();
-        $rsa->loadKey($public_key);
+        if (is_string($public_key)) {
+            $rsa = new Crypt_RSA();
+            $rsa->loadKey($public_key);
+        } else {
+            $rsa = $public_key;
+        }
         $rsa->signatureMode = CRYPT_RSA_SIGNATURE_PKCS1;
         $rsa->setHash("sha256");
         

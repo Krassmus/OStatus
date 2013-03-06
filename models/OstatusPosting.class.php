@@ -24,10 +24,54 @@ class OstatusPosting extends BlubberPosting {
         }
     }
     
-    static public function createFromActivity($event, $activity) {
-        
+    static public function createFromActivity($activity) {
+        if ($activity->verb === "http://activitystrea.ms/schema/1.0/post") {
+            $posting = OstatusPosting::getByForeignId($activity->id);
+            //identifiziere Autor
+            if ($activity->author['id'] === $activity->actor['id']) {
+                $webfinger = substr($activity->author['acct'], 0, 5) === "acct:" 
+                    ? substr($activity->author['acct'], 5)
+                    : $activity->author['acct'];
+                $actor = OstatusContact::findByEmail($webfinger);
+                if ($actor->isNew()) {
+                    $actor = OstatusContact::import_contact($webfinger);
+                }
+            }
+            $posting['user_id'] = $actor->getId();
+            $posting['external_contact'] = 1;
+            $posting['description'] = $activity->content;
+            $posting['mkdate'] = $activity->published;
+            switch ($activity->object['type']) {
+                case "http://activitystrea.ms/schema/1.0/note":
+                    $posting['Seminar_id'] = $posting['user_id'];
+                    $posting['context_type'] = "public";
+                    $posting['parent_id'] = 0;
+                    if ($posting->isNew() && !$posting->getId()) {
+                        $posting->store();
+                        $posting['root_id'] = $posting->getId();
+                    }
+                    if ($posting['user_id']) {
+                        $posting->store();
+                    }
+                    break;
+                case "http://activitystrea.ms/schema/1.0/comment":
+                    //Mutterposting finden:
+                    $replied_posting = OstatusPosting::getByForeignId($activity->reply_to);
+                    if (!$replied_posting->isNew() && $posting['user_id']) {
+                        $posting['context_type'] = $replied_posting['context_type'];
+                        $posting['Seminar_id'] = $replied_posting['Seminar_id'];
+                        $posting['parent_id'] = $replied_posting->getId();
+                        $posting['root_id'] = $replied_posting['root_id'];
+                        $posting->store();
+                    }
+                    break;
+            }
+        }
     }
 
+    /** 
+     * @deprecated
+     */
     static public function createFromArray($entry, $external_contact_id) {
         $id = $verb = $content = $object_type = $mkdate = $reply_to = "";
         foreach ($entry['children'] as $entry_attributes) {

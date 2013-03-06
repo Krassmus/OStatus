@@ -5,11 +5,13 @@ class StreamActivity {
     public $id = null;
     public $title = null;
     
+    public $author = array();
     public $actor = array();
     public $verb = null;
     public $published = null;
     public $content = null;
     public $object = array();
+    public $reply_to = null;
     
     /**
      * Creates an activity from XML-atom-entry as described here:
@@ -27,14 +29,21 @@ class StreamActivity {
                 $id = $title = null;
                 foreach ($activity_entry['children'] as $attribute) {
                     if ($attribute['name'] === "AUTHOR") {
+                        $author = array();
                         foreach ($attribute['children'] as $author_attributes) {
                             if ($author_attributes['name'] === "URI") {
-                                $acct = $author_attributes['tagData'];
+                                $author['acct'] = $author_attributes['tagData'];
+                            }
+                            if ($author_attributes['name'] === "LINK" && $author_attributes['attrs']['REL'] === "alternate") {
+                                $author['id'] = $author_attributes['attrs']['HRFE'];
                             }
                         }
                     }
                     if ($attribute['name'] === "PUBLISHED") {
                         $published = strtotime($attribute['tagData']);
+                    }
+                    if ($attribute['name'] === "THR:IN-REPLY-TO") {
+                        $reply_to = $attribute['attrs']['HREF'];
                     }
                     if ($attribute['name'] === "ACTIVITY:ACTOR") {
                         $actor = array();
@@ -65,15 +74,15 @@ class StreamActivity {
                     if ($attribute['name'] === "CONTENT") {
                         $content = $attribute['tagData'];
                     }
-
-
                 }
                 $activity = new StreamActivity($id, $title);
+                $activity->author = $author;
                 $activity->actor = $actor;
                 $activity->verb = $verb ? $verb : "http://activitystrea.ms/schema/1.0/post";
                 $activity->published = isset($published) ? $published : time();
                 $activity->content = $content;
                 $activity->object = $object;
+                $activity->reply_to = $reply_to; //warum nicht target verwenden?
                 return $activity;
             }
         }

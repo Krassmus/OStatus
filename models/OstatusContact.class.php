@@ -41,6 +41,49 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         }
     }
     
+    static public function externalFollower($activity) {
+        if ($activity->verb === "http://activitystrea.ms/schema/1.0/follow") {
+            //Find users
+            if ($activity->author['id'] === $activity->actor['id']) {
+                $webfinger = substr($activity->author['acct'], 0, 5) === "acct:" 
+                    ? substr($activity->author['acct'], 5)
+                    : $activity->author['acct'];
+                $actor = OstatusContact::findByEmail($webfinger);
+                if ($actor->isNew()) {
+                    $actor = OstatusContact::import_contact($webfinger);
+                }
+            }
+            $user_homepage = $activity->object['id'];
+            if (stripos($user_homepage, $GLOBALS['ABSOLUTE_URI_STUDIP'].'dispatch.php/profile?username=') === 0) {
+                $username = str_replace($GLOBALS['ABSOLUTE_URI_STUDIP'].'dispatch.php/profile?username=', "", $user_homepage);
+                $user_id = get_userid($username);
+            }
+            if (!$user_id or $user_id === "nobody") {
+                return;
+            }
+            
+            $follow_statement = DBManager::get()->prepare(
+                "INSERT IGNORE INTO blubber_follower " .
+                "SET studip_user_id = :user_id, " .
+                    "external_contact_id = :contact_id, " .
+                    "left_follows_right = '0' " .
+            "");
+            $success = $follow_statement->execute(array(
+                'user_id' => $user_id,
+                'contact_id' => $contact->getId()
+            ));
+            if ($success) {
+                PersonalNotifications::add(
+                    $user_id,
+                    $contact->getURL(),
+                    sprintf(_("%s hat Sie als Buddy hinzugefügt"), $contact->getName()),
+                    null,
+                    $contact->getAvatar()->getURL(Avatar::MEDIUM)
+                );
+            }
+        }
+    }
+    
     static public function import_contact($adress) {
         list($username, $server) = explode("@", $adress, 2);
         if (!$username or !$server) {
@@ -79,10 +122,13 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
     }
     
     public function mention($posting) {
-        
+        //irgendwas mit Salmon
     }
 
     public function refresh_lrdd() {
+        if (time() - $this['chdate'] < 3) {
+            return;
+        }
         $data = $this['data'];
         $lrdd = TinyXMLParser::getArray(
             file_get_contents(str_replace("{uri}", urlencode($this['mail_identifier']), $data['lrdd_template']))
@@ -113,6 +159,9 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
     }
     
     public function refresh_feed() {
+        if (time() - $this['chdate'] < 3) {
+            return;
+        }
         $data = $this['data'];
         $feed = TinyXMLParser::getArray(file_get_contents($data['feed_url']));
         foreach ($feed as $entry1) {

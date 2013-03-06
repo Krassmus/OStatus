@@ -35,38 +35,34 @@ class SalmonController extends ApplicationController {
             }
             if ($data && $signature && strtolower($encoding) === "base64url" && strtolower($alg) === "rsa-sha256") {
                 $data = MagicSignature::base64_url_decode($data);
-                $signature = MagicSignature::base64_url_decode($signature);
+                //$signature = MagicSignature::base64_url_decode($signature);
                 //we need a public key now:
                 $activity = StreamActivity::fromXML($data);
-                $activity->process();
-                if ($activity->verb === "http://activitystrea.ms/schema/1.0/follow") {
-                    $user = new BlubberUser($user_id);
-                    //get or create OstatusContact
-                    if (substr($acct, 0, 5) === "acct:") {
-                        $acct = substr($acct, 5);
+                if ($activity->author['id'] === $activity->actor['id']) {
+                    $webfinger = substr($activity->author['acct'], 0, 5) === "acct:" 
+                        ? substr($activity->author['acct'], 5)
+                        : $activity->author['acct'];
+                    $actor = OstatusContact::findByEmail($webfinger);
+                    if ($actor->isNew()) {
+                        $actor = OstatusContact::import_contact($webfinger);
                     }
-                    $contact = OstatusContact::findByEmail($acct);
-                    if ($contact->isNew()) {
-                        $contact = self::import_contact($acct);
+                }
+                if ($actor->getId()) {
+                    $public_key = $actor['data']['magic-public-key'];
+                    if (strpos($public_key, ",") !== false) {
+                        $public_key = substr($public_key, strpos($public_key, ","));
                     }
-                    $follow_statement = DBManager::get()->prepare(
-                        "INSERT IGNORE INTO blubber_follower " .
-                        "SET studip_user_id = :user_id, " .
-                            "external_contact_id = :contact_id, " .
-                            "left_follows_right = '0' " .
-                    "");
-                    $success = $follow_statement->execute(array(
-                        'user_id' => $user_id,
-                        'contact_id' => $contact->getId()
-                    ));
-                    if ($success) {
-                        PersonalNotifications::add(
-                            $user_id,
-                            $contact->getURL(),
-                            sprintf(_("%s hat Sie als Buddy hinzugefügt"), $contact->getName()),
-                            null,
-                            $contact->getAvatar()->getURL(Avatar::MEDIUM)
-                        );
+                    $public_key = explode(".", $public_key);
+                    $mod_hex = bin2hex(MagicSignature::base64_url_decode($public_key[1]));
+                    $ex_hex = bin2hex(MagicSignature::base64_url_decode($public_key[2]));
+                    $raw_key = array(
+                        'modulus' => new Math_BigInteger($mod_hex, 16),
+                        'exponent' => new Math_BigInteger($ex_hex, 16)
+                    );
+                    $rsa->loadKey($raw_key, CRYPT_RSA_PUBLIC_FORMAT_RAW);
+                    $verified = MagicSignature::verify($data, $signature, $rsa);
+                    if ($verified) {
+                        $activity->process();
                     }
                 }
             }
