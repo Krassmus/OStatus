@@ -23,6 +23,10 @@ class OstatusPosting extends BlubberPosting {
             return $posting;
         }
     }
+    
+    static public function createFromActivity($event, $activity) {
+        
+    }
 
     static public function createFromArray($entry, $external_contact_id) {
         $id = $verb = $content = $object_type = $mkdate = $reply_to = "";

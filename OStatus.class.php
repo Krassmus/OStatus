@@ -13,6 +13,7 @@ require_once dirname(__file__)."/models/OstatusPosting.class.php";
 require_once dirname(__file__)."/models/OstatusContact.class.php";
 require_once dirname(__file__)."/models/OstatusUsersKeys.class.php";
 require_once dirname(__file__)."/models/MagicSignature.class.php";
+require_once dirname(__file__)."/models/StreamActivity.class.php";
 
 if (!function_exists("l")) {
     function l($text) {
