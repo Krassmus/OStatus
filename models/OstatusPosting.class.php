@@ -28,20 +28,14 @@ class OstatusPosting extends BlubberPosting {
         if ($activity->verb === "http://activitystrea.ms/schema/1.0/post") {
             $posting = OstatusPosting::getByForeignId($activity->id);
             //identifiziere Autor
-            if ($activity->author['id'] === $activity->actor['id']) {
-                $webfinger = substr($activity->author['acct'], 0, 5) === "acct:" 
-                    ? substr($activity->author['acct'], 5)
-                    : $activity->author['acct'];
-                $actor = OstatusContact::findByEmail($webfinger);
-                if ($actor->isNew()) {
-                    $actor = OstatusContact::import_contact($webfinger);
-                }
-            }
+            $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
+                ? OstatusContact::get($activity->author['acct']) //works even for unknow users
+                : OstatusContact::get($activity->actor['id']);
             $posting['user_id'] = $actor->getId();
             $posting['external_contact'] = 1;
             $posting['description'] = $activity->content;
             $posting['mkdate'] = $activity->published;
-            switch ($activity->object['type']) {
+            switch ($activity->object['objectType']) {
                 case "http://activitystrea.ms/schema/1.0/note":
                     $posting['Seminar_id'] = $posting['user_id'];
                     $posting['context_type'] = "public";

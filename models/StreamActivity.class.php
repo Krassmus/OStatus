@@ -11,6 +11,7 @@ class StreamActivity {
     public $published = null;
     public $content = null;
     public $object = array();
+    public $target = array();
     public $reply_to = null;
     
     /**
@@ -48,7 +49,8 @@ class StreamActivity {
                     if ($attribute['name'] === "ACTIVITY:ACTOR") {
                         $actor = array();
                         if ($object_attribute['name'] === "ACTIVITY:OBJECT-TYPE") {
-                            $actor['type'] = $object_attribute['tagData'];
+                            $actor['objectType'] = $object_attribute['tagData'];
+                            $actor['type'] = $object_attribute['tagData']; //deprecated
                         }
                         if ($object_attribute['name'] === "ID") {
                             $actor['id'] = $object_attribute['tagData'];
@@ -64,7 +66,7 @@ class StreamActivity {
                         foreach ($attribute['children'] as $object_attribute) {
                             $object = array();
                             if ($object_attribute['name'] === "ACTIVITY:OBJECT-TYPE") {
-                                $object['type'] = $object_attribute['tagData'];
+                                $object['objectType'] = $object_attribute['tagData'];
                             }
                             if ($object_attribute['name'] === "ID") {
                                 $object['id'] = $object_attribute['tagData'];
@@ -100,7 +102,7 @@ class StreamActivity {
      * your own plugins to process your own activities or do additional stuff 
      * with the usual activities like "post" or "follow".
      */
-    public function process() {
+    public function import() {
         NotificationCenter::postNotification("ActivityStreamProcesses", $this);
         NotificationCenter::postNotification("ActivityStreamDidProcess", $this);
     }

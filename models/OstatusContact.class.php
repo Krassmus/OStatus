@@ -44,15 +44,9 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
     static public function externalFollower($activity) {
         if ($activity->verb === "http://activitystrea.ms/schema/1.0/follow") {
             //Find users
-            if ($activity->author['id'] === $activity->actor['id']) {
-                $webfinger = substr($activity->author['acct'], 0, 5) === "acct:" 
-                    ? substr($activity->author['acct'], 5)
-                    : $activity->author['acct'];
-                $actor = OstatusContact::findByEmail($webfinger);
-                if ($actor->isNew()) {
-                    $actor = OstatusContact::import_contact($webfinger);
-                }
-            }
+            $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct'] 
+                ? OstatusContact::get($activity->author['acct'])
+                : OstatusContact::get($activity->actor['id']);
             $user_homepage = $activity->object['id'];
             if (stripos($user_homepage, $GLOBALS['ABSOLUTE_URI_STUDIP'].'dispatch.php/profile?username=') === 0) {
                 $username = str_replace($GLOBALS['ABSOLUTE_URI_STUDIP'].'dispatch.php/profile?username=', "", $user_homepage);
@@ -82,6 +76,38 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                 );
             }
         }
+    }
+    
+    static public function get($identifier) {
+        if (preg_match("^[\d\w]{32}$", $identifier)) {
+            //md5-id
+            return new OstatusContact($identifier);
+        } elseif(strpos($identifier, "@") !== false) {
+            //acct
+            if (strpos($identifier, "acct:") === 0) {
+                $identifier = substr($identifier, 5);
+            }
+            $contact = self::findBySQL("mail_identifier = ?", array($email));
+            if ($contact) {
+                return $contact;
+            } else {
+                return self::import_contact($identifier);
+            }
+        } else {
+            //uri
+            $get_mapped_contact = DBManager::get()->prepare(
+                "SELECT item_id " .
+                "FROM ostatus_mapping " .
+                "WHERE type = 'http://activitystrea.ms/schema/1.0/person' " .
+                    "AND foreign_id = :id " .
+            "");
+            $get_mapped_contact->execute(array('id' => $identifier));
+            $contact_id = $get_mapped_contact->fetch(PDO::FETCH_COLUMN, 0);
+            if ($contact_id) {
+                return new OstatusContact($contact_id);
+            }
+        }
+        return false;
     }
     
     static public function import_contact($adress) {
@@ -153,6 +179,19 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                     }
                 }
             }
+        }
+        if ($this['data']['alias']) {
+            $create_mapping = DBManager::get()->prepare(
+                "INSERT IGNORE INTO ostatus_mapping " .
+                "SET item_id = :contact_id, " .
+                    "foreign_id = :id, " .
+                    "type = :type " .
+            "");
+            $create_mapping->execute(array(
+                'contact_id' => $this->getId(),
+                'id' => $this['data']['alias'],
+                'type' => "http://activitystrea.ms/schema/1.0/person"
+            ));
         }
         $this['data'] = $data;
         $this->store();

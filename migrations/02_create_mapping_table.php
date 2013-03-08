@@ -15,7 +15,7 @@ class CreateMappingTable extends DBMigration
             CREATE TABLE IF NOT EXISTS `ostatus_mapping` (
                 `item_id` varchar(32) NOT NULL,
                 `foreign_id` varchar(256) NOT NULL,
-                `type` varchar(30) NOT NULL,
+                `type` varchar(256) NOT NULL,
                 KEY `item_id` (`item_id`,`foreign_id`)
             ) ENGINE=MyISAM
         ");

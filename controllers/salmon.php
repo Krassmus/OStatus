@@ -12,6 +12,13 @@ require_once dirname(__file__)."/application.php";
 
 class SalmonController extends ApplicationController {
     
+    public function endpoint_action() {
+        $this->user_action();
+        if (!$this->performed) {
+            $this->render_nothing();
+        }
+    }
+    
     public function user_action() {
         $body = @file_get_contents('php://input');
         $envelope_array = TinyXMLParser::getArray($body);
@@ -38,16 +45,10 @@ class SalmonController extends ApplicationController {
                 //$signature = MagicSignature::base64_url_decode($signature);
                 //we need a public key now:
                 $activity = StreamActivity::fromXML($data);
-                if ($activity->author['id'] === $activity->actor['id']) {
-                    $webfinger = substr($activity->author['acct'], 0, 5) === "acct:" 
-                        ? substr($activity->author['acct'], 5)
-                        : $activity->author['acct'];
-                    $actor = OstatusContact::findByEmail($webfinger);
-                    if ($actor->isNew()) {
-                        $actor = OstatusContact::import_contact($webfinger);
-                    }
-                }
-                if ($actor->getId()) {
+                $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
+                    ? OstatusContact::get($activity->author['acct']) //works even with unknown contacts
+                    : OstatusContact::get($activity->actor['id']);
+                if ($actor && $actor->getId()) {
                     $public_key = $actor['data']['magic-public-key'];
                     if (strpos($public_key, ",") !== false) {
                         $public_key = substr($public_key, strpos($public_key, ","));
@@ -62,10 +63,10 @@ class SalmonController extends ApplicationController {
                     $rsa->loadKey($raw_key, CRYPT_RSA_PUBLIC_FORMAT_RAW);
                     $verified = MagicSignature::verify($data, $signature, $rsa);
                     if ($verified) {
-                        $activity->process();
+                        $activity->import();
                     }
-                }
-            }
+                } //else: throw away message, we have no possibility to get actor
+            } // else: message has unknown encoding, we cannot verify it (yet?)
         }
         
         $this->render_nothing();
