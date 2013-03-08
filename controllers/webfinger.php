@@ -21,6 +21,7 @@ class WebfingerController extends ApplicationController {
         if (!$this->user->isNew()) {
             $this->keys = OstatusUsersKeys::get($this->user->getId());
         }
+        $this->set_content_type("text/xml");
     }
     
 }
