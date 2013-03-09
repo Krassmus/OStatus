@@ -27,6 +27,7 @@ require_once dirname(__file__)."/application.php";
 class WebfingerController extends ApplicationController {
     
     public function profile_action() {
+        //LRDD
         $resource = Request::get("resource");
         $username = substr($resource, 0, stripos($resource, "@"));
         
@@ -35,6 +36,13 @@ class WebfingerController extends ApplicationController {
         if (!$this->user->isNew()) {
             $this->keys = OstatusUsersKeys::get($this->user->getId());
         }
+        $this->set_content_type("text/xml");
+    }
+    
+    public function feed_action($username) {
+        //atom-feed
+        $this->user = new OstatusUser(get_userid($username));
+        $this->blubber = BlubberPosting::findBySQL("user_id = ? AND external_contact = '0' ORDER BY mkdate DESC", array($this->user->getId()));
         $this->set_content_type("text/xml");
     }
     

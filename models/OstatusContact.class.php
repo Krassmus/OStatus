@@ -225,6 +225,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             return;
         }
         $data = $this['data'];
+        die($data['feed_url']);
         $feed = TinyXMLParser::getArray(file_get_contents($data['feed_url']));
         foreach ($feed as $entry1) {
             if ($entry1['name'] === "FEED") {

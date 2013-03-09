@@ -113,6 +113,11 @@ class StreamActivity {
         }
     }
     
+    /**
+     * constructor
+     * @param type $id
+     * @param type $title 
+     */
     public function __construct($id = null, $title = null) {
         $this->id = $id;
         $this->title = $title;
