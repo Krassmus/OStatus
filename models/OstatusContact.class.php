@@ -45,14 +45,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
     }
     
     static public function makefriend($adress) {
-        $contact = OstatusContact::findByEmail($adress);
-        if ($contact->isNew()) {
-            $contact = self::import_contact($adress);
-        } else {
-            $contact->refresh_lrdd();
-            $contact->refresh_feed();
-        }
-        //Freundschaft eintragen und Folge-Nachricht schicken
+        $contact = OstatusContact::get($adress);
         if ($contact->getId()) {
             $success = $contact->follow_user();
             if ($success !== true) {
