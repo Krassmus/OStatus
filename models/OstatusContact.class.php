@@ -95,7 +95,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
     }
     
     static public function get($identifier) {
-        if (preg_match("^[\d\w]{32}$", $identifier)) {
+        if (preg_match("/[\d\w]{32}/", $identifier)) {
             //md5-id
             return new OstatusContact($identifier);
         } elseif(strpos($identifier, "@") !== false) {
@@ -295,16 +295,20 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $envelope_xml = $this->createEnvelope($xml);
         
         //POST-Request
-        $request = curl_init($new_contact['data']['pubsubhubbub']);
+        $request = curl_init($this['data']['salmon_url']);
         curl_setopt($request, CURLOPT_POST, 1);
+        curl_setopt($request, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($request, CURLOPT_HTTPHEADER, array(
             'Content-type: application/magic-envelope+xml',
             'Content-Length: ' . strlen($envelope_xml)
         ));
         curl_setopt($request, CURLOPT_POSTFIELDS, $envelope_xml);
-        curl_exec($request);
+        $response = curl_exec($request);
+        $code = curl_getinfo($request, CURLINFO_HTTP_CODE);
         $error = curl_error($request);
         curl_close($request);
+        var_dump($code);
+        die($response);
         
         //and the other server does the rest.
         return $error ? $error : true;
