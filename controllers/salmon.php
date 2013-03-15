@@ -30,6 +30,7 @@ class SalmonController extends ApplicationController {
     public function endpoint_action() {
         $body = @file_get_contents('php://input');
         $envelope_array = TinyXMLParser::getArray($body);
+        die("yeah");
         foreach ($envelope_array as $envelope) {
             $data = $encoding = $alg = $signature = null;
             if ($envelope['name'] === "ME:ENV") {
