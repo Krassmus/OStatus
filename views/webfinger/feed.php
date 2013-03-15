@@ -6,7 +6,7 @@
             xmlns:poco="http://portablecontacts.net/spec/1.0" 
             xmlns:ostatus="http://ostatus.org/schema/1.0" 
             xmlns:statusnet="http://status.net/schema/api/1/">
-  <generator uri="<?= $GLOBALS['ABSOLUTE_URI_STUDIP'] ?>" version="<?= ?>"><?= utf8_encode(htmlReady($GLOBALS['UNI_NAME_CLEAN'])) ?></generator>
+  <generator uri="<?= $GLOBALS['ABSOLUTE_URI_STUDIP'] ?>" version="<?= $GLOBALS['SOFTWARE_VERSION'] ?>"><?= utf8_encode(htmlReady($GLOBALS['UNI_NAME_CLEAN'])) ?></generator>
   <id><?= htmlReady($GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/ostatus/webfinger/feed/".$user['username']) ?></id>
   <title><?= utf8_encode(htmlReady($user->getName())) ?> timeline</title>
   <subtitle>Updates from <?= utf8_encode(htmlReady($user->getName())) ?> on <?= utf8_encode(htmlReady($GLOBALS['UNI_NAME_CLEAN'])) ?>!</subtitle>
