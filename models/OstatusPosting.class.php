@@ -34,7 +34,7 @@ class OstatusPosting extends BlubberPosting {
             "SELECT item_id " .
             "FROM ostatus_mapping " .
             "WHERE foreign_id = :id " .
-                "AND type = 'posting' " .
+                "AND type IN ('http://activitystrea.ms/schema/1.0/note','http://activitystrea.ms/schema/1.0/comment','posting') " .
         "");
         $statement->execute(array('id' => $id));
         $blubber_id = $statement->fetch(PDO::FETCH_COLUMN, 0);
@@ -161,15 +161,21 @@ class OstatusPosting extends BlubberPosting {
         $mkdate = $this['mkdate'];
         $new = $this->isNew();
         $success = parent::store();
-        if ($success && $this->getId() && $this->foreign_id) {
+        if ($success && $this->getId() && $this->foreign_id && $new) {
             $statement = DBManager::get()->prepare(
                 "INSERT IGNORE INTO ostatus_mapping " .
                 "SET item_id = :blubber_id, " .
                     "foreign_id = :foreign_id, " .
-                    "type = 'posting' " .
+                    "type = :type_iri " .
             "");
-            $statement->execute(array('blubber_id' => $this->getId(), 'foreign_id' => $this->foreign_id));
-            if ($new && $mkdate != $this['mkdate']) {
+            $statement->execute(array(
+                'blubber_id' => $this->getId(), 
+                'foreign_id' => $this->foreign_id,
+                'type_iri' => !$this['parent_id'] 
+                    ? 'http://activitystrea.ms/schema/1.0/note'
+                    : 'http://activitystrea.ms/schema/1.0/comment'
+            ));
+            if ($mkdate != $this['mkdate']) {
                 $statement = DBManager::get()->prepare(
                     "UPDATE blubber " .
                     "SET mkdate = :mkdate " .

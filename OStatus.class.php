@@ -52,7 +52,6 @@ class OStatus extends StudIPPlugin implements SystemPlugin {
             Navigation::addItem("/community/ostatuscontacts", $nav);
         }
         if (stripos($_SERVER['REQUEST_URI'], "plugins.php/blubber/streams/profile") !== false) {
-            echo "hi";
             if (Request::get('user_id') && Request::get("extern")) {
                 $contact = BlubberExternalContact::find(Request::get('user_id'));
                 if (is_a($contact, "BlubberContact")) {

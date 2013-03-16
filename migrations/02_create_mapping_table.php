@@ -16,8 +16,9 @@ class CreateMappingTable extends DBMigration
                 `item_id` varchar(32) NOT NULL,
                 `foreign_id` varchar(256) NOT NULL,
                 `type` varchar(256) NOT NULL,
+                UNIQUE KEY `uniq` (`item_id`,`foreign_id`,`type`),
                 KEY `item_id` (`item_id`,`foreign_id`)
-            ) ENGINE=MyISAM
+            ) ENGINE=MyISAM;
         ");
     }
     

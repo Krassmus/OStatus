@@ -60,7 +60,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
     static public function externalFollower($activity) {
         if ($activity->verb === "http://activitystrea.ms/schema/1.0/follow") {
             //Find users
-            $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct'] 
+            $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
                 ? OstatusContact::get($activity->author['acct'])
                 : OstatusContact::get($activity->actor['id']);
             $user_homepage = $activity->object['id'];
@@ -80,22 +80,22 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             "");
             $success = $follow_statement->execute(array(
                 'user_id' => $user_id,
-                'contact_id' => $contact->getId()
+                'contact_id' => $actor->getId()
             ));
             if ($success) {
                 PersonalNotifications::add(
                     $user_id,
-                    $contact->getURL(),
-                    sprintf(_("%s hat Sie als Buddy hinzugefügt"), $contact->getName()),
+                    $actor->getURL(),
+                    sprintf(_("%s hat Sie als Buddy hinzugefügt"), $actor->getName()),
                     null,
-                    $contact->getAvatar()->getURL(Avatar::MEDIUM)
+                    $actor->getAvatar()->getURL(Avatar::MEDIUM)
                 );
             }
         }
     }
     
     static public function get($identifier) {
-        if (preg_match("/[\d\w]{32}/", $identifier)) {
+        if (preg_match("/^[a-f0-9]{32}$/", $identifier)) {
             //md5-id
             return new OstatusContact($identifier);
         } elseif(strpos($identifier, "@") !== false) {
@@ -104,8 +104,8 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                 $identifier = substr($identifier, 5);
             }
             $contact = self::findBySQL("mail_identifier = ?", array($email));
-            if ($contact) {
-                return $contact;
+            if (count($contact) > 0) {
+                return $contact[0];
             } else {
                 return self::import_contact($identifier);
             }
@@ -160,11 +160,14 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
     }
 
     public function getURL() {
-        return URLHelper::getURL("plugins.php/Blubber/streams/profile", array('user_id' => $this->getId(), 'extern' => 1));
+        return URLHelper::getURL(
+            "plugins.php/Blubber/streams/profile", 
+            array('user_id' => $this->getId(), 'extern' => 1)
+        );
     }
     
     public function mention($posting) {
-        //irgendwas mit Salmon
+        //irgendwas mit Salmon oder pubhubsubbub
     }
 
     public function refresh_lrdd() {
