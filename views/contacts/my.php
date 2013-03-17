@@ -48,6 +48,7 @@
     <a href="" onClick="STUDIP.Ostatus.add_contact(); return false;">
         <?= Studip\Button::create("folgen") ?>
     </a>
+    <span id="add_contact_wait" style="display: none;"><?= Assets::img("ajax_indicator_small.gif", array("class" => "text-bottom")) ?></span>
 </div>
 
 <script>
@@ -58,12 +59,14 @@ STUDIP.Ostatus = {
         });
     },
     add_contact: function () {
+        jQuery('#add_contact_wait').show();
         jQuery.ajax({
             'url': STUDIP.URLHelper.getURL("plugins.php/OStatus/contacts/add"),
             'data': {
                 'contact_id': jQuery("#contact_id").val()
             },
             success: function (output) {
+                jQuery('#add_contact_wait').hide();
                 console.log(output);
             }
         });
