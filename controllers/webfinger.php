@@ -42,7 +42,7 @@ class WebfingerController extends ApplicationController {
     public function feed_action($username) {
         //atom-feed
         $this->user = new OstatusUser(get_userid($username));
-        $this->blubber = BlubberPosting::findBySQL("user_id = ? AND external_contact = '0' ORDER BY mkdate DESC", array($this->user->getId()));
+        $this->blubber = BlubberPosting::findBySQL("user_id = ? AND context_type = 'public' AND external_contact = '0' ORDER BY mkdate DESC", array($this->user->getId()));
         $this->set_content_type("text/xml");
         $this->set_layout(null);
     }
