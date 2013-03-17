@@ -103,7 +103,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             if (strpos($identifier, "acct:") === 0) {
                 $identifier = substr($identifier, 5);
             }
-            $contact = self::findBySQL("mail_identifier = ?", array($email));
+            $contact = self::findBySQL("mail_identifier = ?", array($identifier));
             if (count($contact) > 0) {
                 return $contact[0];
             } else {
