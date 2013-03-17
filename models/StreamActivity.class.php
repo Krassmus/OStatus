@@ -96,14 +96,13 @@ class StreamActivity {
                         foreach ($attribute['children'] as $object_attribute) {
                             $object = array();
                             if ($object_attribute['name'] === "ACTIVITY:OBJECT-TYPE") {
-                                echo " brrr ";
                                 $object['objectType'] = $object_attribute['tagData'];
                             }
                             if ($object_attribute['name'] === "ID") {
-                                echo " booo ";
                                 $object['id'] = $object_attribute['tagData'];
                             }
                         }
+                        var_dump($object);
                     }
                     if ($attribute['name'] === "CONTENT") {
                         $content = $attribute['tagData'];
