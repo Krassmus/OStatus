@@ -51,6 +51,12 @@ class StreamActivity {
             if ($activity_entry['name'] === "ENTRY") {
                 $id = $title = null;
                 foreach ($activity_entry['children'] as $attribute) {
+                    if ($attribute['name'] === "ID") {
+                        $id = $attribute['tagData'];
+                    }
+                    if ($attribute['name'] === "TITLE") {
+                        $title = $attribute['tagData'];
+                    }
                     if ($attribute['name'] === "AUTHOR") {
                         $author = array();
                         foreach ($attribute['children'] as $author_attributes) {

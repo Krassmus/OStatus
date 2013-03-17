@@ -216,6 +216,17 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $this->store();
     }
     
+    public function getOstatusID() {
+        $find_id = DBManager::get()->prepare(
+            "SELECT foreign_id " .
+            "FROM ostatus_mapping " .
+            "WHERE item_id = :contact_id " .
+            "AND type = 'http://activitystrea.ms/schema/1.0/person' " .
+        "");
+        $find_id->execute(array('contact_id' => $this->getId()));
+        return $find_id->fetch(PDO::FETCH_COLUMN, 0);
+    }
+    
     public function refresh_feed() {
         if (time() - $this['chdate'] < 3) {
             return;

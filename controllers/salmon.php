@@ -60,6 +60,7 @@ class SalmonController extends ApplicationController {
                     ? OstatusContact::get($activity->author['acct']) //works even with unknown contacts
                     : OstatusContact::get($activity->actor['id']);
                 if ($actor && $actor->getId()) {
+                    echo " .have user ".$actor->getId().". ";
                     $public_key = $actor['data']['magic-public-key'];
                     if (strpos($public_key, ",") !== false) {
                         $public_key = substr($public_key, strpos($public_key, ","));

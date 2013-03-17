@@ -21,6 +21,6 @@
     <activity:object-type>http://activitystrea.ms/schema/1.0/person</activity:object-type>
     <title><?= $whiterabbit->getName() ?></title>
     <id><?= htmlReady($whiterabbit['data']['id']) ?></id>
-    <link rel="alternate" type="text/html" href="<?= htmlReady($whiterabbit['data']['id']) ?>"/>
+    <link rel="alternate" type="text/html" href="<?= htmlReady($whiterabbit->getOstatusID()) ?>"/>
   </activity:object>
 </entry>
