@@ -4,6 +4,7 @@
   <title><?= htmlspecialchars($user->getName()) ?> is now following <?= htmlspecialchars($whiterabbit->getName()) ?></title>
   <author>
     <uri>acct:<?= htmlspecialchars($user['username']) ?>@<?= $_SERVER['SERVER_NAME'] ?></uri>
+    <id><?= $GLOBALS['ABSOLUTE_URI_STUDIP']."dispatch.php/profile?username=".$user['username'] ?></id>
     <name><?= htmlspecialchars($user->getName())?></name>
     <link rel="photo" type="image/png" href="<?= htmlspecialchars($user->getAvatar()->getURL(Avatar::NORMAL)) ?>"/>
     <link rel="alternate" type="text/html" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP']."dispatch.php/profile?username=".$user['username'] ?>"/>

@@ -52,12 +52,12 @@ class SalmonController extends ApplicationController {
                 $data = MagicSignature::base64_url_decode($data);
                 //$signature = MagicSignature::base64_url_decode($signature);
                 //we need a public key now:
-                var_dump($data);
                 $activity = StreamActivity::fromXML($data);
                 var_dump($activity);
                 $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
                     ? OstatusContact::get($activity->author['acct']) //works even with unknown contacts
                     : OstatusContact::get($activity->actor['id']);
+                var_dump($actor);
                 if ($actor && $actor->getId()) {
                     echo " .have user ".$actor->getId().". ";
                     $public_key = $actor['data']['magic-public-key'];
