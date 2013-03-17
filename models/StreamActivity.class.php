@@ -46,8 +46,7 @@ class StreamActivity {
      * @return \StreamActivity 
      */
     static public function fromXML($xml) {
-        $envelope_array = TinyXMLParser::getArray($xml);
-        $activity_entries = TinyXMLParser::getArray($envelope_array);
+        $activity_entries = TinyXMLParser::getArray($xml);
         foreach ($activity_entries as $activity_entry) {
             if ($activity_entry['name'] === "ENTRY") {
                 $id = $title = null;
