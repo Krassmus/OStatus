@@ -113,7 +113,7 @@ class StreamActivity {
                 }
                 $activity = new StreamActivity($id, $title);
                 $activity->author = $author;
-                $activity->actor = $actor;
+                $activity->actor = $actor ? $actor : $author;
                 $activity->verb = $verb ? $verb : "http://activitystrea.ms/schema/1.0/post";
                 $activity->published = isset($published) ? $published : time();
                 $activity->content = $content;
