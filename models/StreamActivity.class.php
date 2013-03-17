@@ -76,12 +76,14 @@ class StreamActivity {
                     }
                     if ($attribute['name'] === "ACTIVITY:ACTOR") {
                         $actor = array();
-                        if ($object_attribute['name'] === "ACTIVITY:OBJECT-TYPE") {
-                            $actor['objectType'] = $object_attribute['tagData'];
-                            $actor['type'] = $object_attribute['tagData']; //deprecated
-                        }
-                        if ($object_attribute['name'] === "ID") {
-                            $actor['id'] = $object_attribute['tagData'];
+                        foreach ($attribute['children'] as $object_attribute) {
+                            if ($object_attribute['name'] === "ACTIVITY:OBJECT-TYPE") {
+                                $actor['objectType'] = $object_attribute['tagData'];
+                                $actor['type'] = $object_attribute['tagData']; //deprecated
+                            }
+                            if ($object_attribute['name'] === "ID") {
+                                $actor['id'] = $object_attribute['tagData'];
+                            }
                         }
                     }
                     if ($attribute['name'] === "ACTIVITY:VERB") {
