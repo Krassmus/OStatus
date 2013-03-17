@@ -48,13 +48,12 @@ class SalmonController extends ApplicationController {
                     }
                 }
             }
-            var_dump($data);
-            var_dump($signature);
             if ($data && $signature && strtolower($encoding) === "base64url" && strtolower($alg) === "rsa-sha256") {
                 echo " .have data. ";
                 $data = MagicSignature::base64_url_decode($data);
                 //$signature = MagicSignature::base64_url_decode($signature);
                 //we need a public key now:
+                var_dump($data);
                 $activity = StreamActivity::fromXML($data);
                 var_dump($activity);
                 $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
