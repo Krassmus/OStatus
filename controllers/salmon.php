@@ -30,7 +30,6 @@ class SalmonController extends ApplicationController {
     public function endpoint_action() {
         $body = @file_get_contents('php://input');
         $envelope_array = TinyXMLParser::getArray($body);
-        var_dump($envelope_array);
         foreach ($envelope_array as $envelope) {
             $data = $encoding = $alg = $signature = null;
             if ($envelope['name'] === "ME:ENV") {
@@ -49,7 +48,10 @@ class SalmonController extends ApplicationController {
                     }
                 }
             }
+            var_dump($data);
+            var_dump($signature);
             if ($data && $signature && strtolower($encoding) === "base64url" && strtolower($alg) === "rsa-sha256") {
+                echo " .have data. ";
                 $data = MagicSignature::base64_url_decode($data);
                 //$signature = MagicSignature::base64_url_decode($signature);
                 //we need a public key now:
@@ -57,6 +59,7 @@ class SalmonController extends ApplicationController {
                 $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
                     ? OstatusContact::get($activity->author['acct']) //works even with unknown contacts
                     : OstatusContact::get($activity->actor['id']);
+                echo " .have user. .".$actor->getId().". ";
                 if ($actor && $actor->getId()) {
                     $public_key = $actor['data']['magic-public-key'];
                     if (strpos($public_key, ",") !== false) {
