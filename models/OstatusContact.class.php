@@ -315,8 +315,8 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $follow_template = $template_factory->open("feed/follow.php");
         $follow_template->set_attribute('user', $user);
         $follow_template->set_attribute('whiterabbit', $this);
-        $xml = $follow_template->render();
-        $envelope_xml = studip_utf8encode($this->createEnvelope($xml));
+        $xml = studip_utf8encode($follow_template->render());
+        $envelope_xml = $this->createEnvelope($xml);
         
         //POST-Request
         $request = curl_init($this['data']['salmon_url']);
