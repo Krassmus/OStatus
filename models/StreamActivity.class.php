@@ -91,6 +91,8 @@ class StreamActivity {
                         }
                     }
                     if ($attribute['name'] === "ACTIVITY:OBJECT") {
+                        
+                        echo " brr ";
                         foreach ($attribute['children'] as $object_attribute) {
                             $object = array();
                             if ($object_attribute['name'] === "ACTIVITY:OBJECT-TYPE") {
