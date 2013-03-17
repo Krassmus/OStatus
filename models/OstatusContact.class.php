@@ -293,13 +293,23 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             $follower_user_id = $GLOBALS['user']->id;
         }
         $user = new BlubberUser($follower_user_id);
-        $statement = DBManager::get()->prepare(
-            "INSERT IGNORE INTO blubber_follower " .
-            "SET studip_user_id = :me, " .
-                "external_contact_id = :contact_id, " .
-                "left_follows_right = '1' " .
+        $already_friends = DBManager::get()->prepare(
+            "SELECT 1 " .
+            "FROM blubber_follower " .
+            "WHERE studip_user_id = :me " .
+                "AND external_contact_id = :contact_id " .
+                "AND left_follows_right = '1' " .
         "");
-        $statement->execute(array('me' => $follower_user_id, 'contact_id' => $this->getId()));
+        $already_friends->execute(array('me' => $follower_user_id, 'contact_id' => $this->getId()));
+        if (!$already_friends->fetch(PDO::FETCH_COLUMN, 0)) {
+            $statement = DBManager::get()->prepare(
+                "INSERT IGNORE INTO blubber_follower " .
+                "SET studip_user_id = :me, " .
+                    "external_contact_id = :contact_id, " .
+                    "left_follows_right = '1' " .
+            "");
+            $statement->execute(array('me' => $follower_user_id, 'contact_id' => $this->getId()));
+        }
         
         $template_factory = new Flexi_TemplateFactory(dirname(__file__)."/../views");
         $follow_template = $template_factory->open("feed/follow.php");
