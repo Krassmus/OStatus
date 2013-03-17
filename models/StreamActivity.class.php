@@ -63,11 +63,12 @@ class StreamActivity {
                             if ($author_attributes['name'] === "URI") {
                                 $author['acct'] = $author_attributes['tagData'];
                             }
-                            if ($author_attributes['name'] === "LINK" && $author_attributes['attrs']['REL'] === "alternate") {
-                                $author['id'] = $author_attributes['attrs']['HRFE'];
-                            }
                             if ($author_attributes['name'] === "ID") {
                                 $author['id'] = $author_attributes['tagData'];
+                            }
+                            //and for status.net compliance:
+                            if ($author_attributes['name'] === "LINK" && $author_attributes['attrs']['REL'] === "alternate") {
+                                $author['id'] = $author_attributes['attrs']['HREF'];
                             }
                         }
                     }
