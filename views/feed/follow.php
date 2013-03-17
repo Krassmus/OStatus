@@ -1,6 +1,6 @@
 <?= '<?xml version="1.0" encoding="UTF-8"?>'."\n" ?>
 <entry xmlns="http://www.w3.org/2005/Atom" xmlns:activity="http://activitystrea.ms/spec/1.0/">
-  <id>mimime:<?= $user->getId() ?></id>
+  <id><?= $GLOBALS['ABSOLUTE_URI_STUDIP']."dispatch.php/profile?username=".$user['username'] ?></id>
   <title><?= htmlReady($user->getName()) ?> is now following <?= htmlReady($whiterabbit->getName()) ?></title>
   <author>
     <uri>acct:<?= htmlReady($user['username']) ?>@<?= $_SERVER['SERVER_NAME'] ?></uri>
