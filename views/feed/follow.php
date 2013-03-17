@@ -20,7 +20,7 @@
   <activity:object>
     <activity:object-type>http://activitystrea.ms/schema/1.0/person</activity:object-type>
     <title><?= $whiterabbit->getName() ?></title>
-    <id><?= htmlspecialchars($whiterabbit['data']['id']) ?></id>
+    <id><?= htmlspecialchars($whiterabbit['data']['alias']) ?></id>
     <link rel="alternate" type="text/html" href="<?= htmlspecialchars($whiterabbit['data']['alias']) ?>"/>
   </activity:object>
 </entry>
