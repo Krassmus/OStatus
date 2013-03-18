@@ -72,6 +72,7 @@ class SalmonController extends ApplicationController {
                     $rsa->loadKey($raw_key, CRYPT_RSA_PUBLIC_FORMAT_RAW);
                     $verified = MagicSignature::verify($data, $signature, $rsa);
                     if ($verified) {
+                        echo " .verified. ";
                         $activity->import();
                     }
                 } //else: throw away message, we have no possibility to get actor
