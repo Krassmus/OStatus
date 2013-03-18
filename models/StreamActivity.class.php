@@ -145,7 +145,4 @@ class StreamActivity {
         NotificationCenter::postNotification("ActivityStreamProcesses", $this);
         NotificationCenter::postNotification("ActivityStreamDidProcess", $this);
     }
-    
-    
-    
 }
