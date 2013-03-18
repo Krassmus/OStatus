@@ -53,13 +53,11 @@ class SalmonController extends ApplicationController {
                 //$signature = MagicSignature::base64_url_decode($signature);
                 //we need a public key now:
                 $activity = StreamActivity::fromXML($data);
-                var_dump($activity);
                 $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
                     ? OstatusContact::get($activity->author['acct']) //works even with unknown contacts
                     : OstatusContact::get($activity->actor['id']);
                 var_dump($actor);
                 if ($actor && $actor->getId()) {
-                    echo " .have user ".$actor->getId().". ";
                     $public_key = $actor['data']['magic-public-key'];
                     if (strpos($public_key, ",") !== false) {
                         $public_key = substr($public_key, strpos($public_key, ","));
@@ -75,13 +73,11 @@ class SalmonController extends ApplicationController {
                     $rsa->loadKey($raw_key, CRYPT_RSA_PUBLIC_FORMAT_RAW);
                     $verified = MagicSignature::verify($data, $signature, $rsa);
                     if ($verified) {
-                        die(" .verified!!!. ");
                         $activity->import();
                     }
                 } //else: throw away message, we have no possibility to get actor
             } // else: message has unknown encoding, we cannot verify it (yet?)
         }
-        die(" yeah");
         
         $this->render_nothing();
     }
