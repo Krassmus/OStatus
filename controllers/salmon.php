@@ -71,6 +71,7 @@ class SalmonController extends ApplicationController {
                         'modulus' => new Math_BigInteger($mod_hex, 16),
                         'exponent' => new Math_BigInteger($ex_hex, 16)
                     );
+                    $rsa = new Crypt_RSA();
                     $rsa->loadKey($raw_key, CRYPT_RSA_PUBLIC_FORMAT_RAW);
                     $verified = MagicSignature::verify($data, $signature, $rsa);
                     if ($verified) {
