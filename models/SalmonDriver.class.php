@@ -34,6 +34,7 @@ class SalmonDriver {
     }
     
     public function processFollowers($event, $activity) {
+        echo " .processFollowers. ";
         OstatusContact::externalFollower($activity);
     }
     
