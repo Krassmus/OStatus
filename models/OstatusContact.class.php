@@ -137,7 +137,12 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $new_contact['contact_type'] = __class__;
         $data = array();
         
-        $xrd = TinyXMLParser::getArray(file_get_contents("http://".$server."/.well-known/host-meta"));
+        $url = "http://".$server."/.well-known/host-meta";
+        $xrd_xml = file_get_contents($url);
+        if (!$xrd_xml) {
+            throw new Exception("No host-meta file at host ".$server);
+        }
+        $xrd = TinyXMLParser::getArray($xrd_xml);
         foreach ($xrd as $entry1) {
             if ($entry1['name'] === "XRD") {
                 foreach ($entry1['children'] as $entry2) {
