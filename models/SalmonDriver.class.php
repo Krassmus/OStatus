@@ -25,17 +25,37 @@
 
 class SalmonDriver {
     
+    static public $msg = array();
+    static public $code = null;
+    
     static public function create() {
         return new SalmonDriver();
     }
     
     public function processBlubber($event, $activity) {
-        OstatusPosting::createFromActivity($activity);
+        $success = OstatusPosting::createFromActivity($activity);
+        if ($success) {
+            self::$code = "201 Created";
+        }
     }
     
     public function processFollowers($event, $activity) {
-        echo " .processFollowers. ";
-        OstatusContact::externalFollower($activity);
+        $success = OstatusContact::externalFollower($activity);
+        if ($success) {
+            self::$code = "200 OK";
+        }
+    }
+    
+    public function deliverComment($event, $blubber) {
+        if (($blubber['root_id'] !== $blubber['topic_id'])) {
+            $parent = new BlubberPosting($blubber['root_id']);
+            if ($parent['external_contact']) {
+                $contact = BlubberExternalContact::find($parent['user_id']);
+                if (is_a($contact, "OstatusContact")) {
+                    
+                }
+            }
+        }
     }
     
 }

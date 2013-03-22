@@ -72,12 +72,13 @@ class SalmonController extends ApplicationController {
                     $rsa->loadKey($raw_key, CRYPT_RSA_PUBLIC_FORMAT_RAW);
                     $verified = MagicSignature::verify($data, $signature, $rsa);
                     if ($verified) {
-                        echo " .verified. ";
                         $activity->import();
                     }
                 } //else: throw away message, we have no possibility to get actor
             } // else: message has unknown encoding, we cannot verify it (yet?)
         }
+        $code = SalmonDriver::$code ? SalmonDriver::$code : "510 Not Extended";
+        $this->set_status($code);
         
         $this->render_nothing();
     }

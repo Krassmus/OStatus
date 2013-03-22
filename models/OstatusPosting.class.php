@@ -83,6 +83,7 @@ class OstatusPosting extends BlubberPosting {
                     }
                     break;
             }
+            return $posting;
         }
     }
 

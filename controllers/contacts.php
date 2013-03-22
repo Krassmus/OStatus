@@ -40,20 +40,8 @@ class ContactsController extends ApplicationController {
         
         $own_host_meta = file_get_contents("http://".$_SERVER['SERVER_NAME']."/.well-known/host-meta");
         if (!$own_host_meta) {
-            PageLayout::postMessage(MessageBox::info(_("Dieser Server hat keine host-meta Datei.")));
+            PageLayout::postMessage(MessageBox::info(_("Dieser Server hat keine korrekte host-meta Datei.")));
         }
-        
-        /*$rsa = new Crypt_RSA();
-        $key = "RSA.8zK369nRrd2grj5BO3izZt9AsHZvOu4oouLPed-jgjC1LfTMg210jK3vf7t3ZjdAhRmF7sgnhvas-4SNSta-8S84w4xDuHpqutNEBNhirFFEBbGD-y0l1eyvPaFwG9-7H5nVT9FeV9dcaBUo6v4bV7kkj_3x5J85yZROjYVKdas=.AQAB";
-        $key = explode(".", $key);
-        $mod_hex = bin2hex(MagicSignature::base64_url_decode($key[1]));
-        $ex_hex = bin2hex(MagicSignature::base64_url_decode($key[2]));
-        $raw_key = array(
-            'modulus' => new Math_BigInteger($mod_hex, 16),
-            'exponent' => new Math_BigInteger($ex_hex, 16)
-        );
-        $rsa->loadKey($raw_key, CRYPT_RSA_PUBLIC_FORMAT_RAW);
-        //var_dump($rsa);*/
         
         $this->contacts = OstatusContact::findMine();
     }

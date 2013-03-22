@@ -58,7 +58,6 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
     }
     
     static public function externalFollower($activity) {
-        echo " .external_follower. ";
         if ($activity->verb === "http://activitystrea.ms/schema/1.0/follow") {
             //Find users
             $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
@@ -92,6 +91,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                     $actor->getAvatar()->getURL(Avatar::MEDIUM)
                 );
             }
+            return $success;
         }
     }
     
@@ -337,7 +337,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $code = curl_getinfo($request, CURLINFO_HTTP_CODE);
         $error = curl_error($request);
         curl_close($request);
-        die($response);
+        //die($response);
         
         //and the other server does the rest.
         return $error ? $error : true;
