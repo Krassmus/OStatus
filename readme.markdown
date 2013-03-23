@@ -54,13 +54,13 @@ federate bulletin-board entries or a file-repository. OStatus is highly extendab
 because it relies on activity-streams. So most of the times you only need to define
 a new tuple of verb and object-type (like post and bulletin-board-entry or save and file)
 to start your federation. The only restriction for activities in OStatus is that the 
-actor is always a person in your Stud.IP.
+actor always has to be a person in your Stud.IP.
 
 Try to add a NoticicationCenter::addObserver for the event "ActivityStreamProcesses"
 in order to handle incoming activities in Stud.IP. Send your activities by using
 OstatusUser::federateActivity and you're done - you don't need to bother about 
 RSA-encryption and this kind of protocol-stuff. OStatus-plugin is doing the dirty
-stuff your you.
+work your you.
 
 ## Requirements
 

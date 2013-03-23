@@ -46,7 +46,7 @@ class SalmonDriver {
         }
     }
     
-    public function deliverComment($event, $blubber) {
+    public function federateComment($event, $blubber) {
         if (($blubber['root_id'] !== $blubber['topic_id'])) {
             $parent = new BlubberPosting($blubber['root_id']);
             if ($parent['external_contact']) {

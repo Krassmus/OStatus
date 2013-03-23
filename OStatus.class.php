@@ -68,7 +68,7 @@ class OStatus extends StudIPPlugin implements SystemPlugin {
         NotificationCenter::addObserver(SalmonDriver::create(), "processBlubber", "ActivityStreamProcesses");
         NotificationCenter::addObserver(SalmonDriver::create(), "processFollowers", "ActivityStreamProcesses");
         //  send
-        NotificationCenter::addObserver(SalmonDriver::create(), "deliverComment", "PostingHasSaved");
+        NotificationCenter::addObserver(SalmonDriver::create(), "federateComment", "PostingHasSaved");
     }
     
     /**

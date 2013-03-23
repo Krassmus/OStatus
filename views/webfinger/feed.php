@@ -14,6 +14,7 @@
   <updated>2010-08-22T13:26:16+00:00</updated>
   <author>
     <name><?= studip_utf8encode(htmlspecialchars($user->getName())) ?></name>
+    <poco:displayname><?= studip_utf8encode(htmlspecialchars($user->getName())) ?></poco:displayname>
     <uri><?= $GLOBALS['ABSOLUTE_URI_STUDIP'].'dispatch.php/profile?username='.$user['username'] ?></uri>
   </author>
   <link href="<?= htmlspecialchars($GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/profile?user_id=".$user['user_id']) ?>" rel="alternate" type="text/html"/>
