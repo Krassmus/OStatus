@@ -63,6 +63,7 @@ class OStatus extends StudIPPlugin implements SystemPlugin {
             }
         }
         
+        
         //Salmon
         //  receive
         NotificationCenter::addObserver(SalmonDriver::create(), "processBlubber", "ActivityStreamProcesses");
