@@ -23,6 +23,8 @@
  * THE SOFTWARE.
  */
 
+require_once dirname(__file__)."/TinyXMLParser.php";
+
 class StreamActivity {
     
     public $id = null;
@@ -104,6 +106,9 @@ class StreamActivity {
                             }
                             if ($object_attribute['name'] === "ID") {
                                 $object['id'] = $object_attribute['tagData'];
+                            }
+                            if ($object_attribute['name'] === "TITLE") {
+                                $object['title'] = $object_attribute['tagData'];
                             }
                         }
                     }
