@@ -16,6 +16,7 @@
     <name><?= studip_utf8encode(htmlspecialchars($user->getName())) ?></name>
     <poco:displayname><?= studip_utf8encode(htmlspecialchars($user->getName())) ?></poco:displayname>
     <uri><?= $GLOBALS['ABSOLUTE_URI_STUDIP'].'dispatch.php/profile?username='.$user['username'] ?></uri>
+    <link rel="avatar" href="<?= htmlspecialchars($user->getAvatar()->getURL(Avatar::NORMAL)) ?>"/>
   </author>
   <link href="<?= htmlspecialchars($GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/profile?user_id=".$user['user_id']) ?>" rel="alternate" type="text/html"/>
   <link href="<?= htmlspecialchars($GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/ostatus/hub/register") ?>" rel="hub"/>
