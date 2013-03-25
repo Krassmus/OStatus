@@ -52,7 +52,38 @@ class SalmonDriver {
             if ($parent['external_contact']) {
                 $contact = BlubberExternalContact::find($parent['user_id']);
                 if (is_a($contact, "OstatusContact")) {
+                    $activity = new StreamActivity();
+                    $activity->id = $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/comment/".$blubber->getId();
+                    $activity->title = get_fullname." commented on ".$contact->getName()."'s posting";
+                    $activity->published = $blubber['mkdate'];
+                    $activity->updated = $blubber['chdate'];
+                    $activity->actor = array(
+                        'id' => $GLOBALS['ABSOLUTE_URI_STUDIP']."dispatch.php/profile?username=".get_username(),
+                        'objectType' => "http://activitystrea.ms/schema/1.0/person"
+                    );
                     
+                    $activity->object_type = "http://activitystrea.ms/schema/1.0/comment";
+                            
+                    $xml = $activity->toXML();
+                    $envelope_xml = $this->createEnvelope($xml);
+
+                    //POST-Request
+                    $request = curl_init($this['data']['salmon_url']);
+                    curl_setopt($request, CURLOPT_POST, 1);
+                    curl_setopt($request, CURLOPT_RETURNTRANSFER, TRUE);
+                    curl_setopt($request, CURLOPT_HTTPHEADER, array(
+                        'Content-type: application/magic-envelope+xml',
+                        'Content-Length: ' . strlen($envelope_xml)
+                    ));
+                    curl_setopt($request, CURLOPT_POSTFIELDS, $envelope_xml);
+                    $response = curl_exec($request);
+                    $code = curl_getinfo($request, CURLINFO_HTTP_CODE);
+                    $error = curl_error($request);
+                    curl_close($request);
+                    //die($response);
+
+                    //and the other server does the rest.
+                    return $error ? $error : true;
                 }
             }
         }

@@ -34,7 +34,9 @@ class StreamActivity {
     public $actor = array();
     public $verb = null;
     public $published = null;
+    public $updated = null;
     public $content = null;
+    public $object_type = null;
     public $object = array();
     public $target = array();
     public $reply_to = null;
@@ -122,11 +124,23 @@ class StreamActivity {
                 $activity->verb = $verb ? $verb : "http://activitystrea.ms/schema/1.0/post";
                 $activity->published = isset($published) ? $published : time();
                 $activity->content = $content;
+                $activity->object_type = $object_type;
                 $activity->object = $object;
                 $activity->reply_to = $reply_to; //warum nicht target verwenden?
                 return $activity;
             }
         }
+    }
+    
+    /**
+     * Returns an xml-document for this activity in utf8
+     * @return string : xml-document in utf8 
+     */
+    static public function toXML() {
+        $template_factory = new Flexi_TemplateFactory(dirname(__file__)."/../views");
+        $template = $template_factory->open("salmon/activity.php");
+        $template->set_attribute('activity', $this);
+        return $template->render();
     }
     
     /**

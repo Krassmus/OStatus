@@ -1,4 +1,4 @@
-<?= '<?xml version="1.0" encoding="UTF-8"?>' ?>
+<?= '<?xml version="1.0" encoding="UTF-8"?>'."\n" ?>
 <feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom" 
             xmlns:thr="http://purl.org/syndication/thread/1.0" 
             xmlns:activity="http://activitystrea.ms/spec/1.0/" 
