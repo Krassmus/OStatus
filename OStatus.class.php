@@ -62,7 +62,10 @@ class OStatus extends StudIPPlugin implements SystemPlugin {
                 PageLayout::addHeadElement("link", array('href' => $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/ostatus/webfinger/feed/".get_username(Request::get("user_id"))));
             }
         }
-        
+        if (stripos($_SERVER['REQUEST_URI'], "dispatch.php/profile") !== false) {
+            $username = Request::get("username") ? Request::username("username") : get_username();
+            PageLayout::addHeadElement("link", array('href' => $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/ostatus/webfinger/feed/".$username));
+        }
         
         //Salmon
         //  receive
