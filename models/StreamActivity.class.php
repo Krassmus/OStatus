@@ -36,7 +36,6 @@ class StreamActivity {
     public $published = null;
     public $updated = null;
     public $content = null;
-    public $object_type = null;
     public $object = array();
     public $target = array();
     public $reply_to = null;
@@ -124,9 +123,9 @@ class StreamActivity {
                 $activity->verb = $verb ? $verb : "http://activitystrea.ms/schema/1.0/post";
                 $activity->published = isset($published) ? $published : time();
                 $activity->content = $content;
-                $activity->object_type = $object_type;
                 $activity->object = $object;
                 $activity->reply_to = $reply_to; //warum nicht target verwenden?
+                $activity->context = array('inReplyTo' => array('id' => $reply_to));
                 return $activity;
             }
         }
@@ -136,11 +135,41 @@ class StreamActivity {
      * Returns an xml-document for this activity in utf8
      * @return string : xml-document in utf8 
      */
-    static public function toXML() {
+    public function toXML() {
         $template_factory = new Flexi_TemplateFactory(dirname(__file__)."/../views");
         $template = $template_factory->open("salmon/activity.php");
         $template->set_attribute('activity', $this);
         return $template->render();
+    }
+    
+    /**
+     * Returns an array that can be accessed like this object and looks like
+     * the json-representation of the activity. 
+     * @return array : asociative array for this activity
+     */
+    public function toArray() {
+        $arr = array();
+        $arr['id'] = $this->id;
+        $arr['title'] = $this->title;
+        $arr['author'] = $this->author;
+        $arr['actor'] = $this->actor;
+        $arr['verb'] = $this->verb;
+        $arr['object'] = $this->object;
+        $arr['published'] = $this->published;
+        $arr['updated'] = $this->updated;
+        $arr['content'] = $this->content;
+        $arr['target'] = $this->target;
+        
+        return $arr;
+    }
+    
+    /**
+     * Returns a json object of this activity. 
+     * See http://activitystrea.ms/specs/json/1.0/
+     * @return string : json-object of activity 
+     */
+    public function toJSON() {
+        return json_encode(studip_utf8encode($this->toArray()));
     }
     
     /**

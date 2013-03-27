@@ -7,7 +7,9 @@
     <updated><?= date("c", $activity->updated) ?></updated>
     <activity:actor>
         <id><?= htmlspecialchars($activity->actor['id']) ?></id>
-        <uri></uri>
+        <? if ($activity->actor['url']) : ?>
+        <uri><?= htmlspecialchars($activity->actor['url']) ?></uri>
+        <? endif ?>
         <activity:object-type><?= htmlspecialchars($activity->actor['objectType']) ?></activity:object-type>
     </activity:actor>
     <activity:verb><?= htmlspecialchars($activity->verb) ?></activity:verb>
@@ -19,7 +21,8 @@
         <thr:in-reply-to href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/thread/".$blubb['root_id'] ?>" ref="<?= $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/thread/".$blubb['root_id'] ?>"></thr:in-reply-to>
         <? endif ?>
         <link rel="ostatus:conversation" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/thread/".$blubb['root_id'] ?>"/>
-        <content type="markdown"><?= studip_utf8encode(htmlspecialchars($blubb['description'])) ?></content>
-        <content type="html"><?= studip_utf8encode(htmlspecialchars(formatReady($blubb['description']))) ?></content>
+        <content type="markdown"><?= htmlspecialchars($activity->object['content']) ?></content>
+        <content type="html"><?= htmlspecialchars(formatReady($activity->object['content'])) ?></content>
     </activity:object>
+    <content><?= htmlspecialchars($activity->content) ?></content>
 </entry>

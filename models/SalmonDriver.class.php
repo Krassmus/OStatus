@@ -61,10 +61,16 @@ class SalmonDriver {
                         'id' => $GLOBALS['ABSOLUTE_URI_STUDIP']."dispatch.php/profile?username=".get_username(),
                         'objectType' => "http://activitystrea.ms/schema/1.0/person"
                     );
-                    
-                    $activity->object_type = "http://activitystrea.ms/schema/1.0/comment";
+                    $activity->object = array(
+                        'id' => $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/comment/".$blubber->getId(),
+                        'objectType' => "http://activitystrea.ms/schema/1.0/comment",
+                        'title' => $blubber['title'],
+                        'content' => $blubber['description']
+                    );
+                    $activity->content = $blubber['description'];
                             
                     $xml = $activity->toXML();
+                    //die($xml);
                     $envelope_xml = $this->createEnvelope($xml);
 
                     //POST-Request
