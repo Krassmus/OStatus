@@ -1,7 +1,11 @@
 <?= '<?xml version="1.0" encoding="UTF-8"?>'."\n" ?>
 <entry>
     <title><?= studip_utf8encode(htmlspecialchars($activity->title)) ?></title>
-    <link rel="alternate" type="text/html" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/thread/".$blubb['root_id'] ?>"/>
+    <? foreach ($activity->links as $rel => $link) : ?>
+    <? if (isset($link['href'])) : ?>
+    <link rel="<?= htmlspecialchars($rel) ?>"<? foreach ($link as $attr => $value) { echo " ".htmlspecialchars($attr)."=\"".htmlspecialchars($value)."\""; } ?>/>
+    <? endif ?>
+    <? endforeach ?>
     <id><?= studip_utf8encode(htmlspecialchars($activity->title)) ?></id>
     <published><?= date("c", $activity->published) ?></published>
     <updated><?= date("c", $activity->updated) ?></updated>

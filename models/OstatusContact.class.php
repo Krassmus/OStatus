@@ -322,7 +322,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $follow_template->set_attribute('user', $user);
         $follow_template->set_attribute('whiterabbit', $this);
         $xml = studip_utf8encode($follow_template->render());
-        $envelope_xml = $this->createEnvelope($xml);
+        $envelope_xml = SalmonDriver::createEnvelope($xml);
         
         //POST-Request
         $request = curl_init($this['data']['salmon_url']);
@@ -341,17 +341,5 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         
         //and the other server does the rest.
         return $error ? $error : true;
-    }
-    
-    public function createEnvelope($xml) {
-        $keys = OstatusUsersKeys::get($GLOBALS['user']->id);
-        $data = MagicSignature::base64_url_encode($xml);
-        $sig = MagicSignature::sign($xml, $keys['private_key']);
-        
-        $template_factory = new Flexi_TemplateFactory(dirname(__file__)."/../views");
-        $follow_template = $template_factory->open("salmon/envelope.php");
-        $follow_template->set_attribute('base64data', $data);
-        $follow_template->set_attribute('sig', $sig);
-        return $follow_template->render();
     }
 }

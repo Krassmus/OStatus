@@ -30,6 +30,7 @@ class StreamActivity {
     public $id = null;
     public $title = null;
     
+    public $links = array();
     public $author = array();
     public $actor = array();
     public $verb = null;
@@ -53,6 +54,7 @@ class StreamActivity {
         foreach ($activity_entries as $activity_entry) {
             if ($activity_entry['name'] === "ENTRY") {
                 $id = $title = null;
+                $links = array();
                 foreach ($activity_entry['children'] as $attribute) {
                     if ($attribute['name'] === "ID") {
                         $id = $attribute['tagData'];
@@ -118,6 +120,7 @@ class StreamActivity {
                     }
                 }
                 $activity = new StreamActivity($id, $title);
+                $activity->links = $links;
                 $activity->author = $author;
                 $activity->actor = $actor ? $actor : $author;
                 $activity->verb = $verb ? $verb : "http://activitystrea.ms/schema/1.0/post";

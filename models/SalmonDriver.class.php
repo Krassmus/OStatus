@@ -47,7 +47,7 @@ class SalmonDriver {
     }
     
     public function federateComment($event, $blubber) {
-        if (($blubber['root_id'] !== $blubber['topic_id'])) {
+        if ($blubber['description'] && ($blubber['root_id'] !== $blubber['topic_id'])) {
             $parent = new BlubberPosting($blubber['root_id']);
             if ($parent['external_contact']) {
                 $contact = BlubberExternalContact::find($parent['user_id']);
@@ -55,6 +55,12 @@ class SalmonDriver {
                     $activity = new StreamActivity();
                     $activity->id = $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/comment/".$blubber->getId();
                     $activity->title = get_fullname." commented on ".$contact->getName()."'s posting";
+                    $activity->links = array(
+                        'alternate' => array(
+                            'href' => $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/thread/".$blubber['root_id'],
+                            'type' => "text/html"
+                        )
+                    );
                     $activity->published = $blubber['mkdate'];
                     $activity->updated = $blubber['chdate'];
                     $activity->actor = array(
@@ -64,17 +70,17 @@ class SalmonDriver {
                     $activity->object = array(
                         'id' => $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/comment/".$blubber->getId(),
                         'objectType' => "http://activitystrea.ms/schema/1.0/comment",
-                        'title' => $blubber['title'],
+                        'title' => $blubber['name'],
                         'content' => $blubber['description']
                     );
                     $activity->content = $blubber['description'];
                             
                     $xml = $activity->toXML();
-                    //die($xml);
-                    $envelope_xml = $this->createEnvelope($xml);
+                    $envelope_xml = SalmonDriver::createEnvelope($xml);
+                    $thread = new BlubberPosting($blubber['root_id']);
 
                     //POST-Request
-                    $request = curl_init($this['data']['salmon_url']);
+                    $request = curl_init($contact['data']['salmon_url']);
                     curl_setopt($request, CURLOPT_POST, 1);
                     curl_setopt($request, CURLOPT_RETURNTRANSFER, TRUE);
                     curl_setopt($request, CURLOPT_HTTPHEADER, array(
@@ -93,6 +99,30 @@ class SalmonDriver {
                 }
             }
         }
+    }
+    
+    /**
+     * Creates a magicenvelope for an xml document for a given user_id or current user.
+     * A magic envelope is an xml-doc on its own and has signed the xml with the 
+     * public key of the user.
+     * See: http://salmon-protocol.googlecode.com/svn/trunk/draft-panzer-magicsig-01.html#anchor4
+     * @param string $xml
+     * @param stringnull : $user_id
+     * @return string 
+     */
+    static public function createEnvelope($xml, $user_id = null) {
+        if (!$user_id) {
+            $user_id = $GLOBALS['user']->id;
+        }
+        $keys = OstatusUsersKeys::get($user_id);
+        $data = MagicSignature::base64_url_encode($xml);
+        $sig = MagicSignature::sign($xml, $keys['private_key']);
+        
+        $template_factory = new Flexi_TemplateFactory(dirname(__file__)."/../views");
+        $follow_template = $template_factory->open("salmon/envelope.php");
+        $follow_template->set_attribute('base64data', $data);
+        $follow_template->set_attribute('sig', $sig);
+        return $follow_template->render();
     }
     
 }
