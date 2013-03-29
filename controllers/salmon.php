@@ -50,7 +50,6 @@ class SalmonController extends ApplicationController {
             }
             if ($data && $signature && strtolower($encoding) === "base64url" && strtolower($alg) === "rsa-sha256") {
                 $data = MagicSignature::base64_url_decode($data);
-                var_dump($data);
                 //$signature = MagicSignature::base64_url_decode($signature);
                 //we need a public key now:
                 $activity = StreamActivity::fromXML($data);
@@ -73,6 +72,7 @@ class SalmonController extends ApplicationController {
                     $rsa->loadKey($raw_key, CRYPT_RSA_PUBLIC_FORMAT_RAW);
                     $verified = MagicSignature::verify($data, $signature, $rsa);
                     if ($verified) {
+                        echo "verified! ";
                         $activity->import();
                     }
                 } //else: throw away message, we have no possibility to get actor

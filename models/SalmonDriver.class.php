@@ -54,7 +54,7 @@ class SalmonDriver {
                 if (is_a($contact, "OstatusContact")) {
                     $activity = new StreamActivity();
                     $activity->id = $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/comment/".$blubber->getId();
-                    $activity->title = get_fullname." commented on ".$contact->getName()."'s posting";
+                    $activity->title = get_fullname($blubber['user_id'])." commented on ".$contact->getName()."'s posting";
                     $activity->links = array(
                         'alternate' => array(
                             'href' => $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/thread/".$blubber['root_id'],
