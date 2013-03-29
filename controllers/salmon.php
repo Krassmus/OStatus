@@ -56,6 +56,7 @@ class SalmonController extends ApplicationController {
                 $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
                     ? OstatusContact::get($activity->author['acct']) //works even with unknown contacts
                     : OstatusContact::get($activity->actor['id']);
+                echo " .identifying actor.... ";
                 if ($actor && $actor->getId()) {
                     echo " .could identify actor. ";
                     $public_key = $actor['data']['magic-public-key'];
