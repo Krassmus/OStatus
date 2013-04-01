@@ -35,7 +35,6 @@ class OstatusPosting extends BlubberPosting {
         if (stripos($id, $home_prefix) !== false) {
             //interne ID
             $blubber_id = substr($id, strripos($id, "/") + 1);
-            echo " .Blubber: $blubber_id. ";
         } else {
             $statement = DBManager::get()->prepare(
                 "SELECT item_id " .
@@ -88,6 +87,7 @@ class OstatusPosting extends BlubberPosting {
                         echo " .found comment. ";
                         $posting['context_type'] = $replied_posting['context_type'];
                         $posting['Seminar_id'] = $replied_posting['Seminar_id'];
+                        echo " .Parent: ".$replied_posting->getId().". ";
                         $posting['parent_id'] = $replied_posting->getId();
                         $posting['root_id'] = $replied_posting['root_id'];
                         $posting->store();
