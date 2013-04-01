@@ -31,10 +31,11 @@ class OstatusPosting extends BlubberPosting {
     
     static public function getByForeignId($id) {
         $home_prefix = $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/";
-        if (stripos($id, $home_prefix) === false) {
+        echo " .ID: $id. ";
+        if (stripos($id, $home_prefix) !== false) {
             //interne ID
             $blubber_id = substr($id, strripos($id, "/") + 1);
-            echo " .$blubber_id. ";
+            echo " .Blubber: $blubber_id. ";
         } else {
             $statement = DBManager::get()->prepare(
                 "SELECT item_id " .
