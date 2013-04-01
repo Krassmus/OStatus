@@ -34,6 +34,7 @@ class OstatusPosting extends BlubberPosting {
         if (stripos($id, $home_prefix) === false) {
             //interne ID
             $blubber_id = substr($id, strripos($id, "/") + 1);
+            echo " .$blubber_id. ";
         } else {
             $statement = DBManager::get()->prepare(
                 "SELECT item_id " .
