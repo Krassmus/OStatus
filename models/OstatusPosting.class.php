@@ -30,14 +30,20 @@ class OstatusPosting extends BlubberPosting {
     public $foreign_id = null;
     
     static public function getByForeignId($id) {
-        $statement = DBManager::get()->prepare(
-            "SELECT item_id " .
-            "FROM ostatus_mapping " .
-            "WHERE foreign_id = :id " .
-                "AND type IN ('http://activitystrea.ms/schema/1.0/note','http://activitystrea.ms/schema/1.0/comment','posting') " .
-        "");
-        $statement->execute(array('id' => $id));
-        $blubber_id = $statement->fetch(PDO::FETCH_COLUMN, 0);
+        $home_prefix = $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/";
+        if (stripos($id, $home_prefix) === false) {
+            //interne ID
+            $blubber_id = substr($id, strripos($id, "/") + 1);
+        } else {
+            $statement = DBManager::get()->prepare(
+                "SELECT item_id " .
+                "FROM ostatus_mapping " .
+                "WHERE foreign_id = :id " .
+                    "AND type IN ('http://activitystrea.ms/schema/1.0/note','http://activitystrea.ms/schema/1.0/comment','posting') " .
+            "");
+            $statement->execute(array('id' => $id));
+            $blubber_id = $statement->fetch(PDO::FETCH_COLUMN, 0);
+        }
         if ($blubber_id) {
             return new OstatusPosting($blubber_id);
         } else {

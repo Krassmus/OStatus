@@ -48,7 +48,7 @@ class SalmonDriver {
     
     public function federateComment($event, $blubber) {
         if ($blubber['description'] && ($blubber['root_id'] !== $blubber['topic_id'])) {
-            $parent = new BlubberPosting($blubber['root_id']);
+            $parent = new OstatusPosting($blubber['root_id']);
             if ($parent['external_contact']) {
                 $contact = BlubberExternalContact::find($parent['user_id']);
                 if (is_a($contact, "OstatusContact")) {
