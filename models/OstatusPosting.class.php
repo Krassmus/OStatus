@@ -160,6 +160,17 @@ class OstatusPosting extends BlubberPosting {
             }
         }
     }
+    
+    public function getForeignId() {
+        $statement = DBManager::get()->prepare(
+            "SELECT foreign_id " .
+            "FROM ostatus_mapping " .
+            "WHERE item_id = :id " .
+                "AND type = 'posting' " .
+        "");
+        $statement->execute(array('id' => $this->getId()));
+        return $statement->fetch(PDO::FETCH_COLUMN, 0);
+    }
 
     public function store() {
         $mkdate = $this['mkdate'];

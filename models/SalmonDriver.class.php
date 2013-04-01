@@ -80,6 +80,7 @@ class SalmonDriver {
                         'content' => $blubber['description']
                     );
                     $activity->content = $blubber['description'];
+                    $activity->reply_to = $parent->getForeignId();
                             
                     $xml = $activity->toXML();
                     $envelope_xml = SalmonDriver::createEnvelope($xml);

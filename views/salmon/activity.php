@@ -39,5 +39,8 @@
         <content type="markdown"><?= htmlspecialchars($activity->object['content']) ?></content>
         <content type="html"><?= htmlspecialchars(formatReady($activity->object['content'])) ?></content>
     </activity:object>
+    <? if ($activity->reply_to) : ?>
+    <thr:in-reply-to href="<?= htmlspecialchars($activity->reply_to) ?>" />
+    <? endif ?>
     <content><?= htmlspecialchars($activity->content) ?></content>
 </entry>
