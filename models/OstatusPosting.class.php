@@ -48,6 +48,7 @@ class OstatusPosting extends BlubberPosting {
     }
     
     static public function createFromActivity($activity) {
+        echo " .createFromActivity. ";
         if ($activity->verb === "http://activitystrea.ms/schema/1.0/post") {
             $posting = OstatusPosting::getByForeignId($activity->id);
             //identifiziere Autor
@@ -74,7 +75,9 @@ class OstatusPosting extends BlubberPosting {
                 case "http://activitystrea.ms/schema/1.0/comment":
                     //Mutterposting finden:
                     $replied_posting = OstatusPosting::getByForeignId($activity->reply_to);
+                    echo " .process comment. ";
                     if (!$replied_posting->isNew() && $posting['user_id']) {
+                        echo " .found comment. ";
                         $posting['context_type'] = $replied_posting['context_type'];
                         $posting['Seminar_id'] = $replied_posting['Seminar_id'];
                         $posting['parent_id'] = $replied_posting->getId();

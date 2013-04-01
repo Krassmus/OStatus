@@ -63,6 +63,7 @@ class SalmonDriver {
                     );
                     $activity->published = $blubber['mkdate'];
                     $activity->updated = $blubber['chdate'];
+                    $activity->verb = "http://activitystrea.ms/schema/1.0/post";
                     $activity->author = array(
                         'id' => $GLOBALS['ABSOLUTE_URI_STUDIP']."dispatch.php/profile?username=".get_username(),
                         'uri' => "acct:".get_username()."@".$_SERVER['SERVER_NAME'],

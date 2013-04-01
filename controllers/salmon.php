@@ -57,9 +57,7 @@ class SalmonController extends ApplicationController {
                     ? OstatusContact::get($activity->author['acct']) //works even with unknown contacts
                     : OstatusContact::get($activity->actor['id']);
                 var_dump($activity);
-                echo " .identifying actor.... ";
                 if ($actor && $actor->getId()) {
-                    echo " .could identify actor. ";
                     $public_key = $actor['data']['magic-public-key'];
                     if (strpos($public_key, ",") !== false) {
                         $public_key = substr($public_key, strpos($public_key, ","));
@@ -74,7 +72,6 @@ class SalmonController extends ApplicationController {
                     $rsa = new Crypt_RSA();
                     $rsa->loadKey($raw_key, CRYPT_RSA_PUBLIC_FORMAT_RAW);
                     $verified = MagicSignature::verify($data, $signature, $rsa);
-                    echo " .nearly verified. ";
                     if ($verified) {
                         echo " .verified! ";
                         $activity->import();
