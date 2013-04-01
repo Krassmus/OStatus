@@ -99,10 +99,10 @@ class SalmonDriver {
                     $code = curl_getinfo($request, CURLINFO_HTTP_CODE);
                     $error = curl_error($request);
                     curl_close($request);
-                    var_dump($code);
+                    /*var_dump($code);
                     var_dump($error);
                     var_dump($response);
-                    die();
+                    die();*/
 
                     //and the other server does the rest.
                     return $error ? $error : true;
