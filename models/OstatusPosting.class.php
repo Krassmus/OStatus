@@ -106,14 +106,13 @@ class OstatusPosting extends BlubberPosting {
                         $user_ids = array_unique($user_ids);
                         PersonalNotifications::add(
                             $user_ids,
-                            PluginEngine::getURL(
-                                $this->plugin,
-                                array('cid' => $replied_posting['context_type'] === "course" ? $replied_posting['Seminar_id'] : null), 
-                                "streams/thread/".$replied_posting->getId()
+                            URLHelper::getURL(
+                                "plugins.php/Blubber/streams/thread/".$replied_posting->getId(),
+                                array('cid' => $replied_posting['context_type'] === "course" ? $replied_posting['Seminar_id'] : null)
                             ),
-                            get_fullname()." hat einen Kommentar geschrieben",
+                            $actor->getName()." hat einen Kommentar geschrieben",
                             "posting_".$posting->getId(),
-                            Avatar::getAvatar($GLOBALS['user']->id)->getURL(Avatar::MEDIUM)
+                            $actor->getAvatar()->getURL(Avatar::MEDIUM)
                         );
                         
                     }
