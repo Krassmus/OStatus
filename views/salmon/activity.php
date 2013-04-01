@@ -9,6 +9,17 @@
     <id><?= studip_utf8encode(htmlspecialchars($activity->title)) ?></id>
     <published><?= date("c", $activity->published) ?></published>
     <updated><?= date("c", $activity->updated) ?></updated>
+    <author>
+        <id><?= htmlspecialchars($activity->author['id']) ?></id>
+        <? if ($activity->author['uri']) : ?>
+        <uri><?= htmlspecialchars($activity->author['uri']) ?></uri>
+        <? endif ?>
+        <? foreach ($activity->author['links'] as $rel => $link) : ?>
+        <? if (isset($link['href'])) : ?>
+        <link rel="<?= htmlspecialchars($rel) ?>"<? foreach ($link as $attr => $value) { echo " ".htmlspecialchars($attr)."=\"".htmlspecialchars($value)."\""; } ?>/>
+        <? endif ?>
+        <? endforeach ?>
+    </author>
     <activity:actor>
         <id><?= htmlspecialchars($activity->actor['id']) ?></id>
         <? if ($activity->actor['url']) : ?>

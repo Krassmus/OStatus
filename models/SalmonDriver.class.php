@@ -63,6 +63,11 @@ class SalmonDriver {
                     );
                     $activity->published = $blubber['mkdate'];
                     $activity->updated = $blubber['chdate'];
+                    $activity->author = array(
+                        'id' => $GLOBALS['ABSOLUTE_URI_STUDIP']."dispatch.php/profile?username=".get_username(),
+                        'uri' => "acct:".get_username()."@".$_SERVER['SERVER_NAME'],
+                        'objectType' => "http://activitystrea.ms/schema/1.0/person"
+                    );
                     $activity->actor = array(
                         'id' => $GLOBALS['ABSOLUTE_URI_STUDIP']."dispatch.php/profile?username=".get_username(),
                         'objectType' => "http://activitystrea.ms/schema/1.0/person"
