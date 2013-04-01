@@ -87,10 +87,35 @@ class OstatusPosting extends BlubberPosting {
                         echo " .found comment. ";
                         $posting['context_type'] = $replied_posting['context_type'];
                         $posting['Seminar_id'] = $replied_posting['Seminar_id'];
-                        echo " .Parent: ".$replied_posting->getId().". ";
                         $posting['parent_id'] = $replied_posting->getId();
                         $posting['root_id'] = $replied_posting['root_id'];
                         $posting->store();
+                        $posting['mkdate'] = $activity->published;
+                        $posting->store();
+                        
+                        //Notifications:
+                        $user_ids = array();
+                        if ($replied_posting['user_id'] && $replied_posting['user_id'] !== $GLOBALS['user']->id) {
+                            $user_ids[] = $replied_posting['user_id'];
+                        }
+                        foreach ((array) $replied_posting->getChildren() as $comment) {
+                            if ($comment['user_id'] && ($comment['user_id'] !== $GLOBALS['user']->id) && (!$comment['external_contact'])) {
+                                $user_ids[] = $comment['user_id'];
+                            }
+                        }
+                        $user_ids = array_unique($user_ids);
+                        PersonalNotifications::add(
+                            $user_ids,
+                            PluginEngine::getURL(
+                                $this->plugin,
+                                array('cid' => $replied_posting['context_type'] === "course" ? $replied_posting['Seminar_id'] : null), 
+                                "streams/thread/".$replied_posting->getId()
+                            ),
+                            get_fullname()." hat einen Kommentar geschrieben",
+                            "posting_".$posting->getId(),
+                            Avatar::getAvatar($GLOBALS['user']->id)->getURL(Avatar::MEDIUM)
+                        );
+                        
                     }
                     break;
             }
