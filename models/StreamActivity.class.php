@@ -142,7 +142,7 @@ class StreamActivity {
         $template_factory = new Flexi_TemplateFactory(dirname(__file__)."/../views");
         $template = $template_factory->open("salmon/activity.php");
         $template->set_attribute('activity', $this);
-        return $template->render();
+        return studip_utf8encode($template->render());
     }
     
     /**
