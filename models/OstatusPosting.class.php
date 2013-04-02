@@ -35,6 +35,7 @@ class OstatusPosting extends BlubberPosting {
             //interne ID
             $blubber_id = substr($id, strripos($id, "/") + 1);
         } else {
+            //externe ID
             $statement = DBManager::get()->prepare(
                 "SELECT item_id " .
                 "FROM ostatus_mapping " .
@@ -55,7 +56,7 @@ class OstatusPosting extends BlubberPosting {
     
     static public function createFromActivity($activity) {
         if ($activity->verb === "http://activitystrea.ms/schema/1.0/post") {
-            $posting = OstatusPosting::getByForeignId($activity->id);
+            $posting = OstatusPosting::getByForeignId($activity->object['id']);
             //identifiziere Autor
             $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
                 ? OstatusContact::get($activity->author['acct']) //works even for unknow users
@@ -115,6 +116,17 @@ class OstatusPosting extends BlubberPosting {
                     break;
             }
             return $posting;
+        }
+        if (in_array($activity->verb, array("http://activitystrea.ms/schema/1.0/edit", "http://activitystrea.ms/schema/1.0/update"))) {
+            $posting = OstatusPosting::getByForeignId($activity->object['id']);
+            if (!$posting->isNew()) {
+                $posting['description'] = $activity->content;
+                $posting->store();
+            }
+        }
+        if ($activity->verb === "http://activitystrea.ms/schema/1.0/delete") {
+            $posting = OstatusPosting::getByForeignId($activity->object['id']);
+            $posting->delete();
         }
     }
 

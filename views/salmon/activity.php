@@ -6,7 +6,7 @@
     <link rel="<?= htmlspecialchars($rel) ?>"<? foreach ($link as $attr => $value) { echo " ".htmlspecialchars($attr)."=\"".htmlspecialchars($value)."\""; } ?>/>
     <? endif ?>
     <? endforeach ?>
-    <id><?= studip_utf8encode(htmlspecialchars($activity->title)) ?></id>
+    <id><?= htmlspecialchars($activity->author['id'].";".$activity->verb.";".$activity->object['id']) ?></id>
     <published><?= date("c", $activity->published) ?></published>
     <updated><?= date("c", $activity->updated) ?></updated>
     <author>
