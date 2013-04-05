@@ -32,9 +32,6 @@
         <id><?= htmlspecialchars($activity->object['id']) ?></id>
         <title><?= htmlspecialchars($activity->object['title']) ?></title>
         <activity:object-type><?= htmlspecialchars($activity->object['objectType']) ?></activity:object-type>
-        <? if ($blubb['root_id'] !== $blubb['topic_id']) : ?>
-        <thr:in-reply-to href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/thread/".$blubb['root_id'] ?>" ref="<?= $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/thread/".$blubb['root_id'] ?>"></thr:in-reply-to>
-        <? endif ?>
         <link rel="ostatus:conversation" href="<?= $GLOBALS['ABSOLUTE_URI_STUDIP']."plugins.php/blubber/streams/thread/".$blubb['root_id'] ?>"/>
         <content type="markdown"><?= htmlspecialchars($activity->object['content']) ?></content>
         <content type="html"><?= htmlspecialchars(formatReady($activity->object['content'])) ?></content>
