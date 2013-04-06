@@ -56,11 +56,7 @@ a new tuple of verb and object-type (like post and bulletin-board-entry or save 
 to start your federation. The only restriction for activities in OStatus is that the 
 actor always has to be a person in your Stud.IP.
 
-Try to add a NoticicationCenter::addObserver for the event "ActivityStreamProcesses"
-in order to handle incoming activities in Stud.IP. Send your activities by using
-OstatusUser::federateActivity and you're done - you don't need to bother about 
-RSA-encryption and this kind of protocol-stuff. OStatus-plugin is doing the dirty
-work your you.
+[More information on using OStatus-plugin as an interface in the wiki.](https://github.com/Krassmus/OStatus/wiki/OStatus-plugin-as-an-interface)
 
 ## Requirements
 
@@ -76,3 +72,8 @@ in Stud.IP have to be GPL 2 compatible, which is the case here. Usually I am
 licensing my plugin GPL 2 for consistency with the core-code, but in this case
 MIT license can make it way easier for other PHP-programmers to reuse my classes.
 And yes, I did not use or copy strings from APGL software.
+
+
+
+***
+[![CC BY](http://i.creativecommons.org/l/by/3.0/88x31.png)](http://creativecommons.org/licenses/by/3.0/)
