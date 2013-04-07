@@ -31,7 +31,7 @@ by themselves. OStatus combines them in a specially defined way and creates a
 kind of wrapper protocol that lets different servers communicate with each other
 about persons posting messages, comments and following each other. The five layers are:
 
-* **[webfinger](http://code.google.com/p/webfinger/)**: To identify persons that have accounts on a different server, each user gets a webfinger-id that looks like an email-adress but doesn't need to be one. This adress is <username>@<servername>.<tld> and an example would be krassmus@develop.studip.de
+* **[webfinger](http://code.google.com/p/webfinger/)**: To identify persons that have accounts on a different server, each user gets a webfinger-id that looks like an email-adress but doesn't need to be one. This adress is username@servername.tld and an example would be krassmus@develop.studip.de
 * **[atom-feeds](http://www.atomenabled.org/developers/protocol/atom-protocol-spec.php)**: RSS/atom is a standard for sending messages and thus will be used in OStatus for highly readable feed-streams.
 * **[activitystrea.ms](http://activitystrea.ms/specs/atom/1.0/)**: Most social-network sites are using activity-streams to define activities in the social network. Such an activity consists of actor, verb and an object (and sometimes a target) and is not limited to writing postings or comments. OStatus lets you federate any activities of the user.
 * **[salmon](http://salmon-protocol.googlecode.com/svn/trunk/draft-panzer-salmon-00.html)**: Salmon is a workflow to distribute messages between servers by also verifying the identity of the person and is more secure than email. It reduces the traffic by sending data always to a central point upstream (like salmon swimming upstream).
@@ -69,9 +69,9 @@ having the openssl-extension activated in PHP can fasten some things up.
 
 The whole plugin combined with the Crypt_RSA class is having MIT license. Plugins
 in Stud.IP have to be GPL 2 compatible, which is the case here. Usually I am 
-licensing my plugin GPL 2 for consistency with the core-code, but in this case
+licensing my plugins GPL 2 for consistency with the core-code, but in this case
 MIT license can make it way easier for other PHP-programmers to reuse my classes.
-And yes, I did not use or copy strings from APGL software.
+And yes, I did not use or copy strings from AGPL software.
 
 
 
