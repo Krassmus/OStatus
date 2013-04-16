@@ -35,7 +35,7 @@
         <tr>
             <td colspan="2">
                 <a href="" onClick="STUDIP.Ostatus.add_contact_window(); return false">
-                <?= Assets::img("icons/16/blue/plus") ?>
+                <?= Assets::img("icons/16/blue/add") ?>
                 </a>
             </td>
         </tr>
