@@ -44,7 +44,7 @@
 
 <div id="add_contact_window_title" style="display: none;"><?= _("Kontakt hinzufügen") ?></div>
 <div id="add_contact_window" style="display: none;">
-    <input type="text" style="width: 200px;" id="contact_id" placeholder="<?= ll("Webfinger-ID: blubb@blubber.it") ?>" aria-label="<?= ll("Webfinger-ID: blubb@blubber.it") ?>">
+    <input type="text" style="width: 200px;" id="contact_id" placeholder="<?= _("Webfinger-ID: blubb@blubber.it") ?>" aria-label="<?= _("Webfinger-ID: blubb@blubber.it") ?>">
     <a href="" onClick="STUDIP.Ostatus.add_contact(); return false;">
         <?= Studip\Button::create("folgen") ?>
     </a>

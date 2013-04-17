@@ -34,14 +34,14 @@ require_once dirname(__file__)."/models/StreamActivity.class.php";
 require_once dirname(__file__)."/models/SalmonDriver.class.php";
 require_once dirname(__file__)."/models/OstatusHubSubscription.class.php";
 
-if (!function_exists("l")) {
+/*if (!function_exists("l")) {
     function l($text) {
         return gettext(htmlReady($text));
     }
     function ll($text) {
         return gettext($text);
     }
-}
+}*/
 
 class OStatus extends StudIPPlugin implements SystemPlugin {
     
