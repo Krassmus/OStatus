@@ -23,7 +23,6 @@
  * THE SOFTWARE.
  */
 
-
 require_once dirname(__file__)."/models/TinyXMLParser.php";
 require_once dirname(__file__)."/models/OstatusPosting.class.php";
 require_once dirname(__file__)."/models/OstatusContact.class.php";
@@ -33,15 +32,6 @@ require_once dirname(__file__)."/models/MagicSignature.class.php";
 require_once dirname(__file__)."/models/StreamActivity.class.php";
 require_once dirname(__file__)."/models/SalmonDriver.class.php";
 require_once dirname(__file__)."/models/OstatusHubSubscription.class.php";
-
-/*if (!function_exists("l")) {
-    function l($text) {
-        return gettext(htmlReady($text));
-    }
-    function ll($text) {
-        return gettext($text);
-    }
-}*/
 
 class OStatus extends StudIPPlugin implements SystemPlugin {
     

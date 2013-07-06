@@ -2,5 +2,5 @@ pluginclassname=OStatus
 pluginname=OStatus
 origin=RasmusFuhse
 version=0.1
-studipMinVersion=2.3.99
+studipMinVersion=2.4
 studipMaxVersion=2.99

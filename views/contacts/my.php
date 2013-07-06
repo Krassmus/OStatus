@@ -55,6 +55,7 @@
 STUDIP.Ostatus = {
     add_contact_window: function () {
         jQuery('#add_contact_window').dialog({
+            'modal': true,
             'title': jQuery("#add_contact_window_title").text()
         });
     },
