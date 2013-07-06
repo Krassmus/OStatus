@@ -10,37 +10,36 @@
 
 ?>
 
-<table class="default hover">
-    <thead>
-        <tr>
-            <th><?= _("Name") ?></th>
-            <th><?= _("Adresse") ?></th>
-        </tr>
-    </thead>
-    <tbody>
-        <? if (count($contacts)) : ?>
-        <? foreach ((array) $contacts as $contact) : ?>
-        <tr>
-            <td><a href="<?= URLHelper::getLink("plugins.php/Blubber/streams/profile", array('user_id' => $contact->getId(), 'extern' => 1)) ?>"><?= htmlReady($contact['name']) ?></a></td>
-            <td><?= htmlReady($contact['mail_identifier']) ?></td>
-        </tr>
-        <? endforeach ?>
-        <? else : ?>
-        <tr>
-            <td colspan="2"><?= _("Bisher haben Sie keine OStatus-Kontakte") ?></td>
-        </tr>
-        <? endif ?>
-    </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="2">
-                <a href="" onClick="STUDIP.Ostatus.add_contact_window(); return false">
-                <?= Assets::img("icons/16/blue/add") ?>
-                </a>
-            </td>
-        </tr>
-    </tfoot>
-</table>
+<style>
+    ul#ostatus_contacts {
+        list-style: none;
+        padding: 0px;
+    }
+    ul#ostatus_contacts > li {
+        display: inline-block;
+        min-width: 130px;
+        min-height: 130px;
+        max-width: 130px;
+        max-height: 130px;
+        padding: 8px;
+        overflow: hidden;
+        text-align: center;
+        background-color: #f3f3f3;
+    }
+</style>
+
+<? if (count($contacts)) : ?>
+<ul id="ostatus_contacts">
+    <? foreach ((array) $contacts as $contact) : ?>
+    <?= $this->render_partial("contacts/_contact.php", compact('contact')) ?>
+    <? endforeach ?>
+</ul>
+<? else : ?>
+<? endif ?>
+
+<a href="" onClick="STUDIP.Ostatus.add_contact_window(); return false">
+    <?= Assets::img("icons/16/blue/add", array('class' => "text-bottom")) ?> <?= _("Kontakt hinzufügen") ?>
+</a>
 
 <div id="add_contact_window_title" style="display: none;"><?= _("Kontakt hinzufügen") ?></div>
 <div id="add_contact_window" style="display: none;">

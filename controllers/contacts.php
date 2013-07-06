@@ -38,7 +38,7 @@ class ContactsController extends ApplicationController {
         PageLayout::setTitle(_("Externe Kontakte"));
         $key = OstatusUsersKeys::get($GLOBALS['user']->id);
         
-        $own_host_meta = file_get_contents("http://".$_SERVER['SERVER_NAME']."/.well-known/host-meta");
+        $own_host_meta = @file_get_contents("http://".$_SERVER['SERVER_NAME']."/.well-known/host-meta");
         if (!$own_host_meta) {
             PageLayout::postMessage(MessageBox::info(_("Dieser Server hat keine korrekte host-meta Datei.")));
         }
