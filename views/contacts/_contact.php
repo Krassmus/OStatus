@@ -4,6 +4,6 @@
         <br>
         <?= htmlReady($contact->getName()) ?>
         <br>
-        (<?= htmlReady($contact['mail_identifier']) ?>)
+        &lt;<?= htmlReady($contact['mail_identifier']) ?>&gt;
     </a>
 </li>

@@ -21,10 +21,15 @@
         min-height: 130px;
         max-width: 130px;
         max-height: 130px;
-        padding: 8px;
+        padding: 7px;
+        border: 3px #888888 solid;
+        border-radius: 9px;
         overflow: hidden;
         text-align: center;
         background-color: #f3f3f3;
+    }
+    ul#ostatus_contacts > li:hover {
+        border-color: black;
     }
 </style>
 
@@ -55,7 +60,9 @@ STUDIP.Ostatus = {
     add_contact_window: function () {
         jQuery('#add_contact_window').dialog({
             'modal': true,
-            'title': jQuery("#add_contact_window_title").text()
+            'title': jQuery("#add_contact_window_title").text(),
+            'show': "fade",
+            'hide': "fade"
         });
     },
     add_contact: function () {
@@ -65,9 +72,14 @@ STUDIP.Ostatus = {
             'data': {
                 'contact_id': jQuery("#contact_id").val()
             },
-            success: function (output) {
+            'dataType': "json",
+            success: function (json) {
                 jQuery('#add_contact_wait').hide();
-                console.log(output);
+                jQuery("#contact_id").val("");
+                if (jQuery("#contact_" + json.id).length < 1) {
+                    jQuery(json.html).hide().appendTo("#ostatus_contacts").css('display', "").fadeIn();
+                }
+                jQuery('#add_contact_window').dialog("close");
             }
         });
     }

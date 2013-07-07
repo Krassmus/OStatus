@@ -55,9 +55,19 @@ class ContactsController extends ApplicationController {
             $this->render_json(array('error' => "No @ character in user-adress."));
             return;
         }
-        OstatusContact::makefriend($adress);
+        $contact = OstatusContact::makefriend($adress);
+        $template_factory = $this->get_template_factory();
+        $contact_template = $template_factory->open("contacts/_contact.php");
+        $contact_template->set_layout(null);
+        $contact_template->set_attribute('contact', $contact);
+        $html = $contact_template->render();
         
-        $this->render_nothing();
+        $output = array(
+            'contact_id' => $contact->getId(),
+            'html' => $html
+        );
+        
+        $this->render_json($output);
     }
     
 }

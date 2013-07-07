@@ -77,6 +77,6 @@ class ApplicationController extends Trails_Controller{
 
     function render_json($data) {
         $this->set_content_type('application/json;charset=utf-8');
-        return $this->render_text(json_encode($data));
+        return $this->render_text(json_encode(studip_utf8encode($data)));
     }
 }
