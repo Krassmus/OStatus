@@ -31,7 +31,36 @@
     ul#ostatus_contacts > li:hover {
         border-color: black;
     }
+    #add_contact_panel {
+        text-align: center;
+        display: inline-block;
+        background-color: #dddddd;
+        border: #eeeeee solid 4px;
+        border-radius: 10000px;
+        padding: 5px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 </style>
+
+<div style="text-align: center;">
+<div id="add_contact_panel">
+    <label for="contact_id"><strong>
+        <?= _("Neuen externen Kontakt hinzufügen") ?>
+    </strong></label>
+    <div>
+        <input type="text" style="width: 250px;" id="contact_id" placeholder="<?= _("Webfinger-ID: blog@blubber.it") ?>" aria-label="<?= _("Webfinger-ID: blubb@blubber.it") ?>">
+        <a href="" onClick="STUDIP.Ostatus.add_contact(); return false;">
+            <?= Studip\Button::create("folgen") ?>
+        </a>
+        <span id="add_contact_wait" style="display: none;"><?= Assets::img("ajax_indicator_small.gif", array("class" => "text-bottom")) ?></span>
+    </div>
+    <div>
+        <a href="#"><?= _("Was kann ich hier eingeben?") ?></a>
+    </div>
+</div>
+</div>
+
 
 <? if (count($contacts)) : ?>
 <ul id="ostatus_contacts">
@@ -42,18 +71,6 @@
 <? else : ?>
 <? endif ?>
 
-<a href="" onClick="STUDIP.Ostatus.add_contact_window(); return false">
-    <?= Assets::img("icons/16/blue/add", array('class' => "text-bottom")) ?> <?= _("Kontakt hinzufügen") ?>
-</a>
-
-<div id="add_contact_window_title" style="display: none;"><?= _("Kontakt hinzufügen") ?></div>
-<div id="add_contact_window" style="display: none;">
-    <input type="text" style="width: 200px;" id="contact_id" placeholder="<?= _("Webfinger-ID: blog@blubber.it") ?>" aria-label="<?= _("Webfinger-ID: blubb@blubber.it") ?>">
-    <a href="" onClick="STUDIP.Ostatus.add_contact(); return false;">
-        <?= Studip\Button::create("folgen") ?>
-    </a>
-    <span id="add_contact_wait" style="display: none;"><?= Assets::img("ajax_indicator_small.gif", array("class" => "text-bottom")) ?></span>
-</div>
 
 <script>
 STUDIP.Ostatus = {

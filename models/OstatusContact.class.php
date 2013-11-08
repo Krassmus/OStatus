@@ -23,8 +23,8 @@
  * THE SOFTWARE.
  */
 
-require_once dirname(__file__)."/../../../core/Blubber/models/BlubberUser.class.php";
-require_once dirname(__file__)."/../../../core/Blubber/models/BlubberExternalContact.class.php";
+require_once "public/plugins_packages/core/Blubber/models/BlubberUser.class.php";
+require_once "public/plugins_packages/core/Blubber/models/BlubberExternalContact.class.php";
 
 class OstatusContact extends BlubberExternalContact implements BlubberContact {
     

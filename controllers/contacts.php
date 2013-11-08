@@ -38,10 +38,27 @@ class ContactsController extends ApplicationController {
         PageLayout::setTitle(_("Externe Kontakte"));
         $key = OstatusUsersKeys::get($GLOBALS['user']->id);
         
+        //Do some checks:
         $own_host_meta = @file_get_contents("http://".$_SERVER['SERVER_NAME']."/.well-known/host-meta");
         if (!$own_host_meta) {
-            PageLayout::postMessage(MessageBox::info(_("Dieser Server hat keine korrekte host-meta Datei.")));
+            if (file_exists(dirname(__file__)."/../host-meta")) {
+                PageLayout::postMessage(MessageBox::info(_("Dieser Server hat keine korrekte host-meta Datei."), array(_("Kopieren Sie aus dem Pluginordner die Datei host-meta (ohne Endung) in ein neu zuschaffendes Verzeichnis public/.well-known . Dann sollte das Plugin laufen und diese Fehlermeldung verschwinden."))));
+            } else {
+                PageLayout::postMessage(MessageBox::info(_("Dieser Server hat keine korrekte host-meta Datei.")));
+            }
         }
+        $plugin = PluginManager::getInstance()->getPluginInfo("OStatus");
+        $plugin_roles = RolePersistence::getAssignedPluginRoles($plugin['id']);
+        $nobody_allowed = false;
+        foreach ($plugin_roles as $role) {
+            if (strtolower($role->rolename) === "nobody") {
+                $nobody_allowed = true;
+            }
+        }
+        if (!$nobody_allowed) {
+            PageLayout::postMessage(MessageBox::info(_("Dieses OStatus-Plugin ist nicht für nobody freigeschaltet und wird daher nicht ordnungsgemäß laufen.")));
+        }
+        //checks have ended
         
         $this->contacts = OstatusContact::findMine();
     }

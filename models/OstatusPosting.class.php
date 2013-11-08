@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-require_once dirname(__file__)."/../../../core/Blubber/models/BlubberPosting.class.php";
+require_once "public/plugins_packages/core/Blubber/models/BlubberPosting.class.php";
 
 class OstatusPosting extends BlubberPosting {
     
