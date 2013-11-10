@@ -29,6 +29,7 @@ class SalmonController extends ApplicationController {
     
     public function endpoint_action() {
         $body = @file_get_contents('php://input');
+        OstatusLog::log("Salmon: Incoming envelope.", null, null, $body);
         $envelope_array = TinyXMLParser::getArray($body);
         foreach ($envelope_array as $envelope) {
             $data = $encoding = $alg = $signature = null;
@@ -56,7 +57,7 @@ class SalmonController extends ApplicationController {
                 $actor = ($activity->author['id'] === $activity->actor['id']) && $activity->author['acct']
                     ? OstatusContact::get($activity->author['acct']) //works even with unknown contacts
                     : OstatusContact::get($activity->actor['id']);
-                var_dump($activity);
+                OstatusLog::log("Salmon: Incoming activity.", null, null, $data);
                 if ($actor && $actor->getId()) {
                     $public_key = $actor['data']['magic-public-key'];
                     if (strpos($public_key, ",") !== false) {
@@ -73,7 +74,7 @@ class SalmonController extends ApplicationController {
                     $rsa->loadKey($raw_key, CRYPT_RSA_PUBLIC_FORMAT_RAW);
                     $verified = MagicSignature::verify($data, $signature, $rsa);
                     if ($verified) {
-                        echo " .verified! ";
+                        OstatusLog::log("Salmon: Verified activity. Hooray!", null, $actor->getId(), $data);
                         $activity->import();
                     }
                 } //else: throw away message, we have no possibility to get actor

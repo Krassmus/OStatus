@@ -30,6 +30,10 @@ class OstatusLog {
     protected $destination = null;
     protected $db = null;
     
+    static public function log($description, $user_id = null, $contact_id = null, $data = null) {
+        return self::get()->addEntry($description, $user_id, $contact_id, $data);
+    }
+    
     static public function get() {
         if (self::$instance !== null) {
             return self::$instance;

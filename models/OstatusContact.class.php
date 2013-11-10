@@ -140,6 +140,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         
         $url = "http://".$server."/.well-known/host-meta";
         $xrd_xml = file_get_contents($url);
+        OstatusLog::log("Fetching host-meta from server: ".$server, $GLOBALS['user']->id, null, $xrd_xml);
         if (!$xrd_xml) {
             throw new Exception("No host-meta file at host ".$server);
         }
@@ -182,9 +183,9 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             return;
         }
         $data = $this['data'];
-        $lrdd = TinyXMLParser::getArray(
-            file_get_contents(str_replace("{uri}", urlencode($this['mail_identifier']), $data['lrdd_template']))
-        );
+        $lrdd_data = file_get_contents(str_replace("{uri}", urlencode($this['mail_identifier']), $data['lrdd_template']));
+        OstatusLog::log("Fetching LRDD from external contact.", $GLOBALS['user']->id, $this->getId(), $lrdd_data);
+        $lrdd = TinyXMLParser::getArray($lrdd_data);
         foreach ($lrdd as $entry1) {
             if ($entry1['name'] === "XRD") {
                 foreach ($entry1['children'] as $entry2) {
@@ -239,7 +240,9 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             return;
         }
         $data = $this['data'];
-        $feed = TinyXMLParser::getArray(file_get_contents($data['feed_url']));
+        $feed_data = file_get_contents($data['feed_url']);
+        OstatusLog::log("Fetching user feed from external contact.", $GLOBALS['user']->id, $this->getId(), $feed_data);
+        $feed = TinyXMLParser::getArray($feed_data);
         foreach ($feed as $entry1) {
             if ($entry1['name'] === "FEED") {
                 foreach (array_reverse($entry1['children']) as $entry2) {
@@ -323,7 +326,9 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $follow_template->set_attribute('user', $user);
         $follow_template->set_attribute('whiterabbit', $this);
         $xml = studip_utf8encode($follow_template->render());
+        OstatusLog::log("Following: Created a following-activity.", $follower_user_id, $this->getId(), $xml);
         $envelope_xml = SalmonDriver::createEnvelope($xml);
+        OstatusLog::log("Following: Created an envelope for following a user.", $follower_user_id, $this->getId(), $envelope_xml);
         
         //POST-Request
         $request = curl_init($this['data']['salmon_url']);
@@ -338,7 +343,14 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
         $code = curl_getinfo($request, CURLINFO_HTTP_CODE);
         $error = curl_error($request);
         curl_close($request);
-        //die($response);
+        
+        if ($error) {
+            OstatusLog::log("Following: ERROR! See details.", $follower_user_id, $this->getId(), $error);
+        }
+        OstatusLog::log("Following: Received a response from following a user.", $follower_user_id, $this->getId(), $response);
+        if (!$error) {
+            //register at hub for updates from that user.
+        }
         
         //and the other server does the rest.
         return $error ? $error : true;
