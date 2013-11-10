@@ -68,7 +68,7 @@ class TinyXMLParser {
    
     public function parse($strInputXML) {
    
-        $this->resParser = xml_parser_create ();
+        $this->resParser = xml_parser_create();
         xml_set_object($this->resParser,$this);
         xml_set_element_handler($this->resParser, "tagOpen", "tagClosed");
 

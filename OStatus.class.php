@@ -23,6 +23,7 @@
  * THE SOFTWARE.
  */
 
+require_once dirname(__file__)."/models/OstatusLog.class.php";
 require_once dirname(__file__)."/models/TinyXMLParser.php";
 require_once dirname(__file__)."/models/OstatusPosting.class.php";
 require_once dirname(__file__)."/models/OstatusContact.class.php";
@@ -41,6 +42,9 @@ class OStatus extends StudIPPlugin implements SystemPlugin {
         $nav = new AutoNavigation(_("Externe Kontakte"), PluginEngine::getURL($this, array(), "contacts/my"));
         if ($GLOBALS['perm']->have_perm("autor")) {
             Navigation::addItem("/community/ostatuscontacts", $nav);
+            if ($GLOBALS['perm']->have_perm("root")) {
+                Navigation::addItem("/community/ostatuscontacts/logs", new AutoNavigation(_("Logs"), PluginEngine::getURL($this, array(), "logs/show")));
+            }
         }
         if (stripos($_SERVER['REQUEST_URI'], "plugins.php/blubber/streams/profile") !== false) {
             if (Request::get('user_id') && Request::get("extern")) {

@@ -144,6 +144,7 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
             throw new Exception("No host-meta file at host ".$server);
         }
         $xrd = TinyXMLParser::getArray($xrd_xml);
+        //hier sollte noch ein Check rein, ob die Datei geparset werden konnte
         foreach ($xrd as $entry1) {
             if ($entry1['name'] === "XRD") {
                 foreach ($entry1['children'] as $entry2) {
