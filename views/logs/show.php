@@ -9,11 +9,11 @@
         </tr>
     </thead>
 <? foreach ($log->entries() as $entry) : ?>
-    <tr>
+    <tr data-log="<?= htmlReady($entry['data']) ?>">
         <td><?= htmlReady($entry['description']) ?></td>
         <td><?= $entry['user_id'] ? htmlReady(get_fullname($entry['user_id'])) : "---" ?></td>
         <td><?= $entry['contact_id'] ? htmlReady(OstatusContact::find($entry['contact_id'])->name) : "---" ?></td>
-        <td><?= $entry['data'] ? nl2br(htmlReady($entry['data'])) : "---" ?></td>
+        <td><?= $entry['data'] ? Assets::img("icons/16/blue/checkbox-checked") : "---" ?></td>
         <td><?= date("G:i:s j.n.Y", $entry['mkdate']) ?></td>
     </tr>
 <? endforeach ?>
