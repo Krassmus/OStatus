@@ -58,7 +58,7 @@ class OstatusLog {
         $statement = $this->db->query(
             "SELECT * " .
             "FROM ostatuslog " .
-            "ORDER BY mkdate DESC " .
+            "ORDER BY mkdate DESC, id DESC " .
         "");
         $results = array();
         while ($result = $statement->fetchArray(SQLITE3_ASSOC)) {

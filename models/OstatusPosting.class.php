@@ -76,6 +76,7 @@ class OstatusPosting extends BlubberPosting {
                     }
                     if ($posting['user_id']) {
                         $posting->store();
+                        OstatusLog::log("ActivityStreams: successfully posted a blubber.", null, $actor->getId(), $activity->toArray());
                     }
                     break;
                 case "http://activitystrea.ms/schema/1.0/comment":
@@ -111,7 +112,7 @@ class OstatusPosting extends BlubberPosting {
                             "posting_".$posting->getId(),
                             $actor->getAvatar()->getURL(Avatar::MEDIUM)
                         );
-                        
+                        OstatusLog::log("ActivityStreams: successfully posted a blubber-comment.", null, $actor->getId(), $activity->toArray());
                     }
                     break;
             }
@@ -122,11 +123,13 @@ class OstatusPosting extends BlubberPosting {
             if (!$posting->isNew()) {
                 $posting['description'] = $activity->content;
                 $posting->store();
+                OstatusLog::log("ActivityStreams: successfully edited a blubber.", null, $actor->getId(), $activity->toArray());
             }
         }
         if ($activity->verb === "http://activitystrea.ms/schema/1.0/delete") {
             $posting = OstatusPosting::getByForeignId($activity->object['id']);
             $posting->delete();
+            OstatusLog::log("ActivityStreams: successfully deleted a blubber.", null, $actor->getId(), $activity->toArray());
         }
     }
 

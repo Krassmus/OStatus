@@ -69,7 +69,11 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                 $user_id = get_userid($username);
             }
             if (!$user_id or $user_id === "nobody") {
+                OstatusLog::log("ActivityStreams: ERROR! Could not identify internal user to be followed.", null, $actor->getId(), $activity->toArray());
                 return;
+            }
+            if (!$actor) {
+                OstatusLog::log("ActivityStreams: ERROR! Could not identify external contact requesting to follow someone.", $user_id, null, $activity->toArray());
             }
             
             $follow_statement = DBManager::get()->prepare(
@@ -90,6 +94,9 @@ class OstatusContact extends BlubberExternalContact implements BlubberContact {
                     null,
                     $actor->getAvatar()->getURL(Avatar::MEDIUM)
                 );
+                OstatusLog::log("ActivityStreams: internal user successfully followed.", $user_id, $actor->getId());
+            } else {
+                OstatusLog::log("ActivityStreams: internal user seems to be already followed.", $user_id, $actor->getId());
             }
             return $success;
         }
